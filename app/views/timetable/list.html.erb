@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Find user</title>
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+  <%= stylesheet_link_tag "application", media: "all", "data-turbo-track": "reload" %>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-..." crossorigin="anonymous">
+</head>
+<body class="index">
+
+<%= render "common/header" %>
+
+<%= render "common/notice" %>
+
+<h2>Thời khóa biểu</h2>
+<div style="padding: 0 60px">
+<table class="table thoi-khoa-bieu table-bordered text-center align-middle">
+  <thead class="table-primary">
+  <tr>
+    <th>Buổi / Thứ</th>
+    <% ["Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6", "Thứ 7", "Chủ nhật"].each do |day| %>
+      <th><%= day %></th>
+    <% end %>
+  </tr>
+  </thead>
+  <tbody>
+  <% ["Buổi sáng", "Buổi chiều", "Buổi tối"].each do |session_time| %>
+    <tr>
+      <th><%= session_time %></th>
+      <% ["Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6", "Thứ 7", "Chủ nhật"].each do |day| %>
+        <% cell = @timetable.find { |t| t.schedule[day] == session_time } %>
+        <td>
+          <% if cell %>
+            <div><strong><%= cell.subject %></strong></div>
+            <div><small><%= cell.teacher.full_name %></small></div>
+            <div><small><%= cell.student.full_name %></small></div>
+            <div><small>(<%= cell.location %>)</small></div>
+            <% if cell.status != "closed" && @current_user.role == "teacher" %>
+              <%= button_to "Done",
+                            timetable_done_path(cell.id),
+                            method: :post,
+                            class: "btn btn-sm btn-success mt-1",
+                            data: { confirm: "Xác nhận đã học xong buổi này?" } %>
+            <% end %>
+
+          <% else %>
+            –
+          <% end %>
+        </td>
+      <% end %>
+    </tr>
+  <% end %>
+  </tbody>
+</table>
+</div>
+
+
+<%# if @timetable.present? %>
+<!--  <div class="table-container">-->
+<!--    <table>-->
+<!--      <thead>-->
+<!--      <tr>-->
+<!--        <th>Họ tên</th>-->
+<!--        <th>Môn học</th>-->
+<!--        <th>Lịch học</th>-->
+<!--        <th>Status</th>-->
+<!--      </tr>-->
+<!--      </thead>-->
+<!--      <tbody>-->
+      <%# @timetable.each do |req| %>
+<!--        <tr>-->
+<!--          <td><%#= req.full_name %></td>-->
+<!--          <td><%#= req.subject %></td>-->
+<!--          <td>-->
+            <%# req.schedule.each do |date, time| %>
+<!--              <li><%#= "#{date} - #{time}" %></li>-->
+            <%# end %>
+<!--          </td>-->
+<!--          <td><%#= req.status %></td>-->
+<!--          </td>-->
+<!--        </tr>-->
+      <%# end %>
+<!--      </tbody>-->
+<!--    </table>-->
+<!--  </div>-->
+<!--  <div class="pagination">-->
+    <%#= will_paginate @request %>
+<!--  </div>-->
+<%# else %>
+<!--  <p style="text-align:center;">Chưa thời khóa biểu.</p>-->
+<%# end %>
+<div class="form-actions mt-3" style="margin-left: 60px">
+  <%= link_to "Quay lại", root_path, class: "btn btn-secondary" %>
+</div>
+</body>
+</html>

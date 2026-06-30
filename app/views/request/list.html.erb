@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Find user</title>
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+  <%= stylesheet_link_tag "application", media: "all", "data-turbo-track": "reload" %>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-..." crossorigin="anonymous">
+</head>
+<body class="index">
+
+<%= render "common/header" %>
+
+<%= render "common/notice" %>
+
+<h2>Danh sách lời mời</h2>
+<!-- Thanh tìm kiếm -->
+<% if current_user && current_user.role == "teacher" %>
+  <%= form_with url: request_list_path, method: :get, local: true, class: "search" do |f| %>
+  <!-- Status -->
+  <div>
+    <%= f.select :status, options_for_select(
+        [
+            ["Trạng thái", ""],
+            ["Open", "open"],
+            ["Accepted", "accepted"],
+            ["Rejected", "rejected"],
+            ["Closed", "closed"]
+        ],
+        selected: params[:status]
+    ), {}, class: "form-select" %>
+  </div>
+  <!-- Học phí thấp nhất -->
+  <div>
+    <%= f.number_field :budget_min,
+                       value: params[:budget_min],
+                       class: "form-control",
+                       placeholder: "Học phí từ"
+    %>
+  </div>
+  <!-- Học phí cao nhất -->
+  <div>
+    <%= f.number_field :budget_max,
+                       value: params[:budget_max],
+                       class: "form-control",
+                       placeholder: "Học phí đến"
+    %>
+  </div>
+  <!-- Địa điểm -->
+  <div>
+    <%= f.text_field :location,
+                     value: params[:location],
+                     class: "form-control",
+                     placeholder: "Nhập khu vực..."
+    %>
+  </div>
+  <!-- Môn - Cấp học -->
+  <div class="form-group">
+    <%= f.select :mon_cap,
+                 options_for_select(
+                     [["Môn - Cấp học", ""]] +
+                         current_user.teacher_profile.subjects.map { |subject, level|
+                           ["#{subject} - #{level}", "#{subject} - #{level}"]
+                         },
+                     params[:mon_cap]
+                 ),
+                 {},
+                 class: "form-select w-auto"
+    %>
+  </div>
+  <!-- Nút tìm kiếm -->
+  <div>
+    <%= f.submit "Tìm kiếm", class: "btn btn-success w-100" %>
+  </div>
+  <!-- Reset -->
+  <div>
+    <%= link_to "Đặt lại", request_list_path, class: "btn btn-success w-100" %>
+  </div>
+
+<% end %>
+<% end %>
+<% if @request.present? %>
+  <div class="table-container">
+    <table>
+      <thead>
+      <tr>
+        <th>Họ tên</th>
+        <th>Môn học</th>
+        <th>Cấp học</th>
+        <th>Note</th>
+        <th>Học phí đề xuất</th>
+        <th>Địa điểm</th>
+        <th>Lịch học</th>
+        <th>Status</th>
+        <th>Học phí</th>
+      </tr>
+      </thead>
+      <tbody>
+      <% @request.each do |req| %>
+        <tr>
+          <td><%= req.teacher_name %></td>
+          <td><%= req.subject %></td>
+          <td><%= req.grade_level %></td>
+          <td><%= req.requirement_detail %></td>
+          <td><%= req.budget %></td>
+          <td><%= req.location %></td>
+          <td>
+            <% req.schedule.each do |date, time| %>
+              <%= "#{date} - #{time}" %>
+            <% end %>
+          </td>
+          <td><%= "#{req.status}" %></td>
+          <td>
+            <%= "#{req.tuition.amount} - #{tuition_status_text(req.tuition.status)}" if req.tuition %>
+          </td>
+
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+  </div>
+  <div class="pagination">
+    <%= will_paginate @request %>
+  </div>
+<% else %>
+  <p style="text-align:center;">Chưa có lời mời.</p>
+<% end %>
+<div class="form-actions mt-3" style="margin-left: 60px">
+  <%= link_to "Nộp học phí", tuition_path, method: :get, class: "btn btn-success ms-2" %>
+  <%= link_to "Quay lại", root_path, class: "btn btn-secondary" %>
+</div>
+</body>
+</html>

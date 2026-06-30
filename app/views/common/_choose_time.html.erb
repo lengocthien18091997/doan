@@ -1,0 +1,21 @@
+<div class="dynamic-field-container" data-field-name="availability">
+  <%= "Chọn thời gian rảnh" %>
+  <% (@current_user.teacher_profile&.availability || {}).each do |day, session| %>
+    <div class="field-row mb-2 d-flex align-items-center">
+      <input type="text"
+             name="user[teacher_profile_attributes][availability][<%= day %>]"
+             value="<%= day %>"
+             class="form-control me-2 w-50"
+             placeholder="Ngày trong tuần (VD: Thứ 2)">
+      <select name="user[teacher_profile_attributes][availability][<%= day %>]"
+              class="form-select w-25">
+        <option value="Buổi sáng" <%= "selected" if session == "Buổi sáng" %>>Buổi sáng</option>
+        <option value="Buổi chiều" <%= "selected" if session == "Buổi chiều" %>>Buổi chiều</option>
+        <option value="Buổi tối" <%= "selected" if session == "Buổi tối" %>>Buổi tối</option>
+      </select>
+      <button type="button" class="btn btn-danger btn-sm ms-2 remove-row">–</button>
+    </div>
+  <% end %>
+</div>
+
+<button type="button" id="add-availability" class="btn btn-secondary mt-2">+ Thêm ngày</button>

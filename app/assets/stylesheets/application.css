@@ -1,0 +1,355 @@
+body {
+    background-image: url(bg.webp);
+    background-size: 100vh 100vw;
+    overflow: auto;
+}
+
+h2 {
+    margin: 15px 0 !important;
+    padding: 0 60px;
+}
+
+.form-actions {
+    margin-bottom: 50px;
+}
+
+table.thoi-khoa-bieu {
+    table-layout: fixed;
+    width: 100%;
+}
+
+table.thoi-khoa-bieu th, table.thoi-khoa-bieu td {
+    width: 12.5%;
+    word-wrap: break-word;
+}
+
+form.search {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
+    margin: 40px 0 20px 0;
+    padding: 0 60px;
+}
+
+form.update-form {
+    margin: 0;
+    padding: 0 60px;
+}
+
+form.update-form .form-group {
+    padding: 10px 0;
+}
+
+form.update-form .form-group select {
+    padding: .375rem .75rem;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: var(--bs-body-color);
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-color: var(--bs-body-bg);
+    background-clip: padding-box;
+    border: var(--bs-border-width) solid var(--bs-border-color);
+    border-radius: var(--bs-border-radius);
+    transition: border-color .15s
+    ease-in-out, box-shadow .15s
+    ease-in-out;
+}
+
+div.pagination {
+    display: flex;
+    justify-content: end;
+    margin: 20px 0;
+    padding: 0 60px;
+}
+
+div.pagination div.pagination {
+    margin: 0;
+    padding: 0;
+}
+
+div.pagination ul {
+    gap: 10px;
+    margin: 0;
+}
+
+div.pagination ul li {
+    padding: 0 10px;
+    box-sizing: border-box;
+    width: fit-content;
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    min-width: 40px;
+    height: fit-content;
+    border: 1px solid #eee;
+    background: #198754;
+    border-radius: 10px;
+}
+
+div.pagination ul li:hover {
+    background: #096887;
+}
+
+div.pagination ul li.disabled {
+    background: #868782;
+}
+
+div.pagination ul li.disabled:hover {
+    background: #868782;
+}
+
+div.pagination ul li.disabled a {
+    cursor: default;
+}
+
+div.pagination ul li a {
+    color: #fff;
+    text-decoration: none;
+}
+
+.btn.btn-outline-danger {
+    background: #B00100;
+}
+
+.header {
+    padding: 0 60px;
+}
+
+.header, .header div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #fff;
+    height: 100px;
+}
+
+.header img {
+    border: none;
+    width: 80px;
+    height: 80px;
+}
+
+.header div:nth-child(1) p {
+    margin: 0 0 0 15px;
+    font-size: 50px;
+    font-family: fantasy;
+    color: #198754;
+}
+
+.header div:nth-child(2) p {
+    margin: 0;
+    font-size: 30px;
+    color: #198754;
+}
+
+.header .btn-logout {
+    border: none;
+    background: none;
+}
+
+.header .btn-logout:hover {
+    border: none;
+    background: #198754;
+}
+
+.header .btn-logout:hover svg{
+    color: #fff;
+}
+
+.header .btn-logout svg {
+    width: 60px;
+    height: 60px;
+    color: #198754;
+}
+
+/*====================new===================================*/
+body.new {
+    font-family: Arial;
+    background-color: #f6f7fb;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+.new .login-box {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    width: 340px;
+}
+.new .login-box h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+.new input[type=email], input[type=password] {
+    width: 100%;
+    padding: 10px;
+    margin: 6px 0;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+.new button {
+    width: 100%;
+    padding: 10px;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    margin-top: 10px;
+    cursor: pointer;
+}
+.new button:hover {
+    background: #0056b3;
+}
+.new .alert, .index .alert {
+    color: red;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+/*=====================================================================*/
+
+.index body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+    margin: 20px;
+}
+
+.index h1, h2 {
+    text-align: center;
+    color: #333;
+}
+
+.index table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #fff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.index th, td {
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+div.detail {
+    padding: 0 160px;
+}
+
+div.detail .form-group {
+    padding: 10px 10px;
+    border: 1px solid;
+    border-top: none;
+}
+
+div.detail .form-group:first-child {
+    border-top: 1px solid;
+}
+
+div.detail .form-group label {
+    width: 200px;
+    font-weight: bold;
+}
+
+td.locked .btn-outline-danger {
+    background: #adb5bd;
+}
+
+td.locked .btn-outline-danger:hover {
+    cursor: default;
+}
+
+td .btn-success {
+    background: #adb5bd;
+}
+
+td .btn-success:hover {
+    background: #adb5bd;
+    cursor: default;
+}
+
+td.locked .btn-success {
+    background: #198754;
+    cursor: pointer;
+}
+
+.index th {
+    background-color: #198754;
+    color: white;
+}
+
+.index tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.index tr:hover {
+    background-color: #f1f1f1;
+}
+
+.index .btn {
+    padding: 6px 12px;
+    margin-right: 5px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    color: #fff;
+    font-size: 14px;
+}
+
+.index .btn-detail {
+    background-color: #2196F3;
+}
+
+.index .btn-lock {
+    background-color: #f44336;
+}
+
+.index .logout-btn {
+    display: inline-block;
+    margin-bottom: 20px;
+    background-color: #e91e63;
+    padding: 8px 16px;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.index .logout-btn:hover {
+    background-color: #d81b60;
+}
+
+.index .table-container {
+    padding: 0 60px;
+    width: 100%;
+}
+
+.teacher-cell {
+    position: relative;
+    padding: 12px 8px 8px 8px;
+}
+
+.star-flag {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    background: #ffcc00;
+    color: #333;
+    font-size: 15px;
+    font-weight: bold;
+    padding: 2px 6px;
+    border-radius: 4px;
+    line-height: 1;
+}
+
+.teacher-name {
+    display: block;
+    margin-top: 10px;
+}

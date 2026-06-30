@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>support</title>
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+  <%= stylesheet_link_tag "application", media: "all", "data-turbo-track": "reload" %>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-..." crossorigin="anonymous">
+</head>
+<body class="index">
+
+<%= render "common/header" %>
+
+<%if @current_user.role == 'admin' %>
+  <h2>Danh sách support</h2>
+<%else %>
+  <h2>Thêm support</h2>
+<%end %>
+
+<%= render "common/notice" %>
+
+<%if @current_user.role == 'admin' %>
+  <% if @support.present? %>
+    <div class="table-container">
+      <table>
+        <thead>
+        <tr>
+          <th>Họ tên</th>
+          <th>Category</th>
+          <th>Comment</th>
+          <th>Status</th>
+          <th class="text-center">Hành động</th>
+        </tr>
+        </thead>
+        <tbody>
+        <% @support.each do |sup| %>
+          <tr>
+            <td><%= sup.user.full_name %></td>
+            <td><%= sup.category %></td>
+            <td><%= sup.comment %></td>
+            <td><%= sup.status %></td>
+            <td class="text-center d-flex justify-content-center">
+              <%= button_to support_processing_path(sup), method: :post, class: "btn btn-primary" do %>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-fill" viewBox="0 0 16 16">
+                  <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0"></path>
+                  <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8m8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7"></path>
+                </svg>
+                Đang xử lý
+              <% end %>
+
+              <%= button_to support_closed_path(sup), method: :post, class: "btn btn-primary" do %>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-lock2-fill" viewBox="0 0 16 16">
+                  <path d="M7 6a1 1 0 0 1 2 0v1H7z"></path>
+                  <path d="M12 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2m-2 6v1.076c.54.166 1 .597 1 1.224v2.4c0 .816-.781 1.3-1.5 1.3h-3c-.719 0-1.5-.484-1.5-1.3V8.3c0-.627.46-1.058 1-1.224V6a2 2 0 1 1 4 0"></path>
+                </svg>
+                Đã xử lý
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <p style="text-align:center;">Chưa có yêu cầu.</p>
+  <% end %>
+<%else %>
+  <%= form_with model: @support, url: support_path, method: :post, local: true, class: "update-form" do |f| %>
+    <div class="form-group">
+      <%= f.label :category, "Category" %>
+      <%= f.select :category, [%w(account account), %w(payment payment), %w(other other)],
+                   { prompt: "Chọn category" },
+                   class: "form-control" %>
+    </div>
+    <div class="form-group">
+      <%= label :comment, "Comment" %>
+      <%= f.text_field :comment, class: "form-control", placeholder: "Comment..." %>
+    </div>
+    <div class="form-actions mt-3">
+      <%= f.submit "Gửi yêu cầu", class: "btn btn-success" if @current_user.role != 'admin' %>
+      <%= link_to "Quay lại", root_path, class: "btn btn-secondary" %>
+    </div>
+  <%end %>
+<%end %>
+
+</body>
+</html>

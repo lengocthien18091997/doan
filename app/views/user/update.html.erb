@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Find user</title>
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+  <%= stylesheet_link_tag "application", media: "all", "data-turbo-track": "reload" %>
+  <%= javascript_include_tag "application", "data-turbo-track": "reload", defer: true %>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-..." crossorigin="anonymous">
+</head>
+<body class="index">
+
+<%= render "common/header" %>
+
+<h2>Cập nhật thông tin</h2>
+
+<%= render "common/notice" %>
+
+<%= form_with model: @current_user, url: user_update_path, method: :post, local: true, class: "update-form" do |f| %>
+  <div class="form-group">
+    <%= f.label :full_name, "Họ tên" %>
+    <%= f.text_field :full_name, class: "form-control", placeholder: "Nhập họ tên..." %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :email, "Email" %>
+    <%= f.email_field :email, class: "form-control", placeholder: "Nhập email..." %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :phone_number, "Số điện thoại" %>
+    <%= f.text_field :phone_number, class: "form-control", placeholder: "Nhập số điện thoại..." %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :gender, "Giới tính" %>
+    <%= f.select :gender, [["nam", "male"], ["nữ", "female"]],
+                 { prompt: "Chọn giới tính" },
+                 class: "form-control" %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :date_of_birth, "Ngày sinh" %>
+    <%= f.date_select :date_of_birth,
+                      start_year: 1900,
+                      end_year: Time.current.year,
+                      order: [:day, :month, :year],
+                      class: "form-control" %>
+  </div>
+
+  <% if @current_user.role == 'teacher' %>
+    <div class="mb-3">
+      <button type="button" id="show-update-profile" class="btn btn-success">
+        Cập nhật hồ sơ giáo viên
+      </button>
+    </div>
+
+    <div id="update-profile-container" style="display: none;">
+      <%= render "common/update_profile", f: f %>
+    </div>
+  <% end %>
+
+
+  <div class="form-check">
+    <%= f.check_box :is_locked, class: "form-check-input" %>
+    <%= f.label :is_locked, "Khóa tài khoản", class: "form-check-label" %>
+  </div>
+
+  <div class="form-actions mt-3">
+    <%= f.submit "Cập nhật", class: "btn btn-success" %>
+    <%= link_to "Hủy", root_path, class: "btn btn-secondary" %>
+  </div>
+<% end %>
+</body>
+</html>

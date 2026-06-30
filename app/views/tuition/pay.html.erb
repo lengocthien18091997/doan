@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Find user</title>
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+  <%= stylesheet_link_tag "application", media: "all", "data-turbo-track": "reload" %>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-..." crossorigin="anonymous">
+</head>
+<body class="index">
+
+<%= render "common/header" %>
+
+<%= render "common/notice" %>
+
+
+<div class="container mt-5 text-center">
+  <h3>Quét mã QR để chuyển khoản</h3>
+
+  <p>
+    Giáo viên:
+    <strong><%= @teacher.full_name %></strong>
+  </p>
+
+  <p>
+    Học sinh:
+    <strong><%= @tuition.student.full_name %></strong>
+  </p>
+
+  <p>
+    Số tiền:
+    <strong><%= number_to_currency(@tuition.amount/2, unit: "₫", precision: 0) %></strong>
+  </p>
+
+  <div class="my-4">
+    <img src="<%= @qr_url %>" alt="VietQR" class="img-fluid" />
+  </div>
+
+  <p class="text-muted">
+    Nội dung chuyển khoản: <br>
+    <strong>Hoc phi <%= @tuition.student.full_name %></strong>
+  </p>
+
+</div>
+
+
+
+<div class="form-actions mt-3" style="margin-left: 60px">
+  <%= link_to "Quay lại", root_path, class: "btn btn-secondary" %>
+</div>
+</body>
+</html>

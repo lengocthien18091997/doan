@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Find user</title>
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+  <%= stylesheet_link_tag "application", media: "all", "data-turbo-track": "reload" %>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-..." crossorigin="anonymous">
+</head>
+<body class="index">
+
+<%= render "common/header" %>
+
+<%= render "common/notice" %>
+
+<h2>Quản lý học phí</h2>
+
+<div class="table-container">
+  <table>
+    <thead class="table-dark">
+    <tr>
+      <th>Giáo viên</th>
+      <th>Học sinh</th>
+      <th>Tổng học phí</th>
+      <th>Trạng thái</th>
+      <th>Action</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <% @tuitions.each do |t| %>
+      <tr>
+        <td><%= t.teacher_name %></td>
+        <td><%= t.student_name %></td>
+        <td><%= number_to_currency(t.amount, unit: "₫", precision: 0) %></td>
+
+        <td class="text-center justify-content-center">
+          <% case t.status %>
+          <% when "new" %>
+            <span class="badge bg-warning">Chờ cọc</span>
+          <% when "deposit" %>
+            <span class="badge bg-info">Đã cọc</span>
+          <% when "payed" %>
+            <span class="badge bg-success">Hoàn thành</span>
+          <% end %>
+        </td>
+
+        <td class="text-center d-flex justify-content-center">
+          <% if current_user && current_user.role == "teacher" %>
+
+
+            <% if t.status == "new" %>
+              <%= button_to "Xác nhận đã nhận cọc",
+                          tuition_deposit_path(t),
+                          method: :post,
+                          data: { confirm: "Xác nhận đã nhận cọc?" },
+                          class: "btn btn-sm btn-warning" %>
+
+            <% elsif t.status == "deposit" %>
+              <%= button_to "Xác nhận hoàn thành",
+                          tuition_complete_path(t),
+                          method: :post,
+                          data: { confirm: "Xác nhận đã thanh toán đủ?" },
+                          class: "btn btn-sm btn-warning" %>
+            <% else %>
+              <span class="text-muted">—</span>
+            <% end %>
+
+          <% elsif current_user && current_user.role == "student" %>
+            <% if t.status == "new" %>
+              <%= link_to "Nộp tiền cọc",
+                            tuition_pay_path(t),
+                            method: :get,
+                            data: { confirm: "nộp tiền cọc" },
+                            class: "btn btn-sm btn-warning" %>
+
+            <% elsif t.status == "deposit" %>
+              <%= button_to "Nộp học phí còn lại",
+                            tuition_pay_path(t),
+                            method: :get,
+                            data: { confirm: "Nộp học phí còn lại" },
+                            class: "btn btn-sm btn-warning" %>
+            <% else %>
+              <span class="text-muted">—</span>
+            <% end %>
+          <% end %>
+
+
+        </td>
+      </tr>
+    <% end %>
+    </tbody>
+  </table>
+</div>
+
+
+<div class="form-actions mt-3" style="margin-left: 60px">
+  <%= link_to "Quay lại", root_path, class: "btn btn-secondary" %>
+</div>
+</body>
+</html>

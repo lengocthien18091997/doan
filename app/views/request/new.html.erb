@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Find user</title>
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+  <%= stylesheet_link_tag "application", media: "all", "data-turbo-track": "reload" %>
+  <%= javascript_include_tag "application", "data-turbo-track": "reload", defer: true %>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-..." crossorigin="anonymous">
+</head>
+<body class="index">
+
+<%= render "common/header" %>
+
+<h2>Tạo lời mời</h2>
+
+<%= render "common/notice" %>
+<%= form_with url: request_save_path(@teacher), method: :post, local: true, class: "update-form" do |f| %>
+  <div class="form-group">
+    <%= f.label :teacher_full_name, "Giáo viên" %>
+    <%= f.text_field :teacher_full_name, class: "form-control", value: @teacher.full_name, readonly: true %>
+  </div>
+
+  <div class="form-group">
+  <%= f.label :mon_cap, "Chọn môn - cấp học" %>
+    <%= f.select :mon_cap,
+                 options_for_select(
+                     [["Chọn", ""]] +
+                         @teacher.teacher_profile.subjects.map { |subject, level| ["#{subject} - #{level}"] },
+                     selected: params[:mon_cap]
+                 ),
+                 {},
+                 class: "form-select w-25"
+    %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :date_time, "Chọn thời gian học" %>
+    <%= f.select :date_time,
+                 options_for_select(
+                     [["Chọn", ""]] +
+                         @teacher.teacher_profile.availability.map { |date, time| ["#{date} - #{time}"] },
+                     selected: params[:date_time]
+                 ),
+                 {},
+                 class: "form-select w-25"
+    %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :req_detail, "Chi tiết lời mời" %>
+    <%= f.text_field :req_detail, class: "form-control", placeholder: "Nhập chi tiết ..." %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :budget, "Kinh phí đề xuất (VND/1 giờ)" %>
+    <%= f.text_field :budget, class: "form-control", placeholder: "Nhập kinh phí...", value: @teacher.teacher_profile.hourly_rate %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :location, "Địa điểm" %>
+    <%= f.text_field :location, class: "form-control", placeholder: "Nhập địa điểm..." %>
+  </div>
+
+  <div class="form-actions mt-3">
+    <%= f.submit "Gửi lời mời", class: "btn btn-success" %>
+    <%= link_to "Danh sách lời mời", request_list_path, class: "btn btn-success" %>
+    <%= link_to "Hủy", user_detail_path(@teacher), class: "btn btn-secondary" %>
+  </div>
+<% end %>
+
+
+</body>
+</html>

@@ -1,0 +1,64 @@
+<%= f.fields_for :teacher_profile do |tp| %>
+  <div class="form-group">
+    <%= tp.label :bio, "Giới thiệu" %>
+    <%= tp.text_field :bio, class: "form-control", placeholder: "Nhập bio..." %>
+  </div>
+
+  <div class="form-group">
+    <%= tp.label :education_level, "Trình độ" %>
+    <%= tp.text_field :education_level, class: "form-control", placeholder: "Nhập trình độ..." %>
+  </div>
+
+  <div class="form-group">
+    <%= tp.label :experience_years, "Số năm kinh nghiệm" %>
+    <%= tp.text_field :experience_years, class: "form-control", placeholder: "Nhập số năm kinh nghiệm..." %>
+  </div>
+
+  <hr>
+  <h5>Thông tin ngân hàng</h5>
+
+  <div class="form-group">
+    <%= tp.label :bank_name, "Ngân hàng" %>
+    <%= tp.text_field :bank_name, class: "form-control", placeholder: "VD: Vietcombank" %>
+  </div>
+
+  <div class="form-group">
+    <%= tp.label :bank_code, "Mã ngân hàng" %>
+    <%= tp.select :bank_code,
+                  [
+                      ["Vietcombank", "VCB"],
+                      ["BIDV", "BIDV"],
+                      ["VietinBank", "ICB"],
+                      ["ACB", "ACB"],
+                      ["Techcombank", "TCB"],
+                      ["MB Bank", "MB"]
+                  ],
+                  { prompt: "Chọn ngân hàng" },
+                  class: "form-control"
+    %>
+  </div>
+
+  <div class="form-group">
+    <%= tp.label :bank_account_number, "Số tài khoản" %>
+    <%= tp.text_field :bank_account_number, class: "form-control", placeholder: "Nhập số tài khoản" %>
+  </div>
+
+  <div class="form-group">
+    <%= tp.label :bank_account_name, "Tên chủ tài khoản" %>
+    <%= tp.text_field :bank_account_name, class: "form-control", placeholder: "NGUYEN VAN A" %>
+  </div>
+
+  <div class="form-group">
+    <%= tp.label :location, "Tỉnh/TP" %>
+    <%= tp.text_field :location, class: "form-control", placeholder: "Nhập tỉnh/TP hiện tại..." %>
+  </div>
+
+  <div class="form-group">
+    <%= tp.label :hourly_rate, "Offer" %>
+    <%= tp.text_field :hourly_rate, class: "form-control", placeholder: "Nhập offer theo giờ..." %>
+  </div>
+
+  <%= render "common/choose_subject" %>
+
+  <%= render "common/choose_time" %>
+<% end %>

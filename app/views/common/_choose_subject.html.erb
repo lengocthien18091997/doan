@@ -1,0 +1,21 @@
+<div class="dynamic-field-container" data-field-name="subjects">
+  <%= "Chọn môn học" %>
+  <% (@current_user.teacher_profile&.subjects || {}).each do |subject, level| %>
+    <div class="field-row mb-2 d-flex align-items-center">
+      <input type="text"
+             name="user[teacher_profile_attributes][subjects][<%= subject %>]"
+             value="<%= subject %>"
+             class="form-control me-2 w-50"
+             placeholder="Tên môn học (VD: Toán)">
+      <select name="user[teacher_profile_attributes][subjects][<%= subject %>]"
+              class="form-select w-25">
+        <option value="Cấp 1" <%= "selected" if level == "Cấp 1" %>>Cấp 1</option>
+        <option value="Cấp 2" <%= "selected" if level == "Cấp 2" %>>Cấp 2</option>
+        <option value="Cấp 3" <%= "selected" if level == "Cấp 3" %>>Cấp 3</option>
+      </select>
+      <button type="button" class="btn btn-danger btn-sm ms-2 remove-row">–</button>
+    </div>
+  <% end %>
+</div>
+
+<button type="button" id="add-subject" class="btn btn-secondary mt-2">+ Thêm môn</button>

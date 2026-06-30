@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Find user</title>
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+  <%= stylesheet_link_tag "application", media: "all", "data-turbo-track": "reload" %>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-..." crossorigin="anonymous">
+</head>
+<body class="index">
+
+<%= render "common/header" %>
+
+<%= render "common/notice" %>
+
+<% if current_user &&  (current_user.role == "admin" || current_user.role == "student")%>
+
+  <!-- Thanh tìm kiếm -->
+  <%= form_with url: root_path, method: :get, local: true, class: "search" do |f| %>
+    <div>
+      <%= f.text_field :query, value: params[:query], class: "form-control", placeholder: "Nhập tên hoặc email..." %>
+    </div>
+
+    <div>
+      <%= f.text_field :location, value: params[:location], class: "form-control", placeholder: "Nhập khu vực..." %>
+    </div>
+
+    <div>
+      <% if current_user.role == "admin" %>
+        <%= f.select :role, options_for_select(
+            [["Tất cả", ""], ["Admin", "admin"], ["Gia sư", "teacher"], ["Học viên", "student"]],
+            selected: params[:role]
+        ), {}, class: "form-select" %>
+      <%end %>
+    </div>
+    <% cap_hoc = tinh_cap_hoc(current_user.date_of_birth) if current_user.role == 'student' %>
+    <%= f.select :cap_hoc, options_for_select(
+        [["Cấp học", ""], ["Cấp 1", "Cấp 1"], ["Cấp 2", "Cấp 2"], ["Cấp 3", "Cấp 3"]],
+        selected: params[:cap_hoc] || cap_hoc
+    ), {}, class: "form-select w-auto" %>
+
+    <%= f.select :mon_hoc, options_for_select(
+        [["Môn học", ""], %w(Toán Toán), %w(Lý Lý), %w(Hóa Hóa), %w(Sinh Sinh), %w(Văn Văn), %w(Sử Sử), %w(Địa Địa), %w(Anh Anh)],
+        selected: params[:mon_hoc]
+    ), {}, class: "form-select w-auto" %>
+    <div>
+      <%= f.submit "Tìm kiếm", class: "btn btn-success w-100" %>
+    </div>
+
+    <div>
+      <%= link_to "Đặt lại", root_path, class: "btn btn-success w-100" %>
+    </div>
+  <% end %>
+
+
+  <h2>
+    <% if current_user.role == "student" %>
+      Danh sách giáo viên
+    <% elsif current_user.role == "admin" %>
+      Danh sách user
+    <% end %>
+  </h2>
+
+  <% if @user.present? %>
+    <div class="table-container">
+      <table>
+        <thead>
+        <tr>
+          <th>Họ tên</th>
+          <th>Email</th>
+          <th>Số điện thoại</th>
+          <%= content_tag(:th, "Chuyên môn") if current_user.role == "student" %>
+          <th class="text-center">Hành động</th>
+        </tr>
+        </thead>
+        <tbody>
+        <% @user.each do |user| %>
+          <tr>
+
+            <td class="teacher-cell">
+              <% if user.star.to_f >= 3 %>
+                <span class="star-flag">
+                  ⭐ <%= user.star.to_f.round(1) %>
+                </span>
+              <% end %>
+                          <span class="teacher-name">
+                <%= user.full_name %>
+              </span>
+            </td>
+
+
+            <td><%= user.email %></td>
+            <td><%= user.phone_number %></td>
+            <% if current_user.role == "student" %>
+              <td>
+                <% if user.teacher_profile&.subjects.present? %>
+                  <ul class="d-inline-block m-0 ps-3">
+                    <% user.teacher_profile.subjects.each do |subject, level| %>
+                      <li><%= "#{subject} - #{level}" %></li>
+                    <% end %>
+                  </ul>
+                <% else %>
+                  <span>Chưa có môn học</span>
+                <% end %>
+              </td>
+            <% end %>
+            <td class="<%= 'locked' if user.is_locked == true %> text-center d-flex justify-content-center">
+              <%= link_to user_detail_path(user), method: :get, class: "btn btn-primary" do %>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-fill" viewBox="0 0 16 16">
+                  <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0"></path>
+                  <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8m8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7"></path>
+                </svg>
+                Xem chi tiết
+              <%end %>
+              <%if @current_user.role == 'admin' %>
+                <%= button_to user_lock_path(user), method: :post, class: "btn btn-outline-danger" do %>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-lock2-fill" viewBox="0 0 16 16">
+                    <path d="M7 6a1 1 0 0 1 2 0v1H7z"></path>
+                    <path d="M12 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2m-2 6v1.076c.54.166 1 .597 1 1.224v2.4c0 .816-.781 1.3-1.5 1.3h-3c-.719 0-1.5-.484-1.5-1.3V8.3c0-.627.46-1.058 1-1.224V6a2 2 0 1 1 4 0"></path>
+                  </svg>
+                  Lock
+                <%end %>
+
+                <%= button_to user_unlock_path(user), method: :post, class: "btn btn-success" do %>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-lock2-fill" viewBox="0 0 16 16">
+                  <path d="M7 6a1 1 0 0 1 2 0v1H7z"></path>
+                  <path d="M12 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2m-2 6v1.076c.54.166 1 .597 1 1.224v2.4c0 .816-.781 1.3-1.5 1.3h-3c-.719 0-1.5-.484-1.5-1.3V8.3c0-.627.46-1.058 1-1.224V6a2 2 0 1 1 4 0"></path>
+                </svg>
+                Open
+                <%end %>
+              <%end %>
+            </td>
+          </tr>
+        <% end %>
+        </tbody>
+      </table>
+    </div>
+    <div class="pagination">
+      <%= will_paginate @user %>
+    </div>
+  <% else %>
+    <p style="text-align:center;">Chưa có ai.</p>
+  <% end %>
+<% elsif current_user && current_user.role == "teacher" %>
+  <h2>Danh sách lời mời dạy học</h2>
+  <!-- Thanh tìm kiếm -->
+  <%= form_with url: root_path, method: :get, local: true, class: "search" do |f| %>
+    <!-- Status -->
+    <div>
+      <%= f.select :status, options_for_select(
+          [
+              ["Trạng thái", ""],
+              ["Open", "open"],
+              ["Accepted", "accepted"],
+              ["Rejected", "rejected"],
+              ["Closed", "closed"]
+          ],
+          selected: params[:status]
+      ), {}, class: "form-select" %>
+    </div>
+    <!-- Học phí thấp nhất -->
+    <div>
+      <%= f.number_field :budget_min,
+                         value: params[:budget_min],
+                         class: "form-control",
+                         placeholder: "Học phí từ"
+      %>
+    </div>
+    <!-- Học phí cao nhất -->
+    <div>
+      <%= f.number_field :budget_max,
+                         value: params[:budget_max],
+                         class: "form-control",
+                         placeholder: "Học phí đến"
+      %>
+    </div>
+    <!-- Địa điểm -->
+    <div>
+      <%= f.text_field :location,
+                       value: params[:location],
+                       class: "form-control",
+                       placeholder: "Nhập khu vực..."
+      %>
+    </div>
+    <!-- Môn - Cấp học -->
+    <% subjects = current_user.teacher_profile&.subjects || [] %>
+
+    <div class="form-group">
+      <%= f.select :mon_cap,
+                   options_for_select(
+                       [["Môn - Cấp học", ""]] +
+                           subjects.map { |subject, level|
+                             ["#{subject} - #{level}", "#{subject} - #{level}"]
+                           },
+                       params[:mon_cap]
+                   ),
+                   {},
+                   class: "form-select w-auto"
+      %>
+    </div>
+
+    <!-- Nút tìm kiếm -->
+    <div>
+      <%= f.submit "Tìm kiếm", class: "btn btn-success w-100" %>
+    </div>
+    <!-- Reset -->
+    <div>
+      <%= link_to "Đặt lại", root_path, class: "btn btn-success w-100" %>
+    </div>
+
+  <% end %>
+  <% if @request.present? %>
+    <div class="table-container">
+      <table>
+        <thead>
+        <tr>
+          <th>Họ tên</th>
+          <th>Môn học</th>
+          <th>Cấp học</th>
+          <th>Note</th>
+          <th>Học phí đề xuất</th>
+          <th>Địa điểm</th>
+          <th>Lịch học</th>
+          <th>Status</th>
+          <th class="text-center">Hành động</th>
+        </tr>
+        </thead>
+        <tbody>
+        <% @request.each do |req| %>
+          <tr>
+            <td><%= req.full_name %></td>
+            <td><%= req.subject %></td>
+            <td><%= req.grade_level %></td>
+            <td><%= req.requirement_detail %></td>
+            <td><%= req.budget %></td>
+            <td><%= req.location %></td>
+            <td>
+              <% req.schedule.each do |date, time| %>
+                <%= "#{date} - #{time}" %>
+              <% end %>
+            </td>
+            <td><%= req.status %></td>
+            <td class="text-center d-flex justify-content-center">
+              <% if req.status == 'open' %>
+                <%= button_to "Chấp nhận", request_accep_path(req), method: :post, class: "btn btn-primary" %>
+                <%= button_to "Từ chối", request_denial_path(req), method: :post, class: "btn btn-outline-danger" %>
+              <% else %>
+                <%= link_to "Xem học phí", tuition_path, method: :get, class: "btn btn-primary" %>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+        </tbody>
+      </table>
+    </div>
+    <div class="pagination">
+      <%= will_paginate @request %>
+    </div>
+  <% else %>
+    <p style="text-align:center;">Chưa có lời mời.</p>
+  <% end %>
+<% end %>
+
+<% if current_user.role == "teacher" || current_user.role == "student"%>
+  <div class="form-actions mt-3" style="padding-left: 60px">
+    <%= link_to "Thời khóa biểu", timetable_path, method: :get, class: "btn btn-success" %>
+    <% if current_user.role == "student"%>
+      <%= link_to "Danh sách lời mời", request_list_path, method: :get, class: "btn btn-success ms-2" %>
+    <% end %>
+    <%= link_to "Review", review_list_path, method: :get, class: "btn btn-success ms-2" %>
+  </div>
+<% end %>
+
+</body>
+</html>

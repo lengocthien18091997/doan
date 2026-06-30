@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Đăng nhập | Teacher Finder</title>
+  <%= stylesheet_link_tag "application", media: "all", "data-turbo-track": "reload" %>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-..." crossorigin="anonymous">
+</head>
+<body class="new">
+<div class="login-box">
+  <h2>Teacher Finder</h2>
+
+  <% if flash[:alert] %>
+    <div class="alert"><%= flash[:alert] %></div>
+  <% end %>
+  <% if flash[:notice] %>
+    <div style="color:green;text-align:center;"><%= flash[:notice] %></div>
+  <% end %>
+
+  <%= form_with url: login_path, method: :post do %>
+    <label>Email</label>
+    <%= email_field_tag :email, nil, placeholder: "Nhập email" %>
+
+    <label>Mật khẩu</label>
+    <%= password_field_tag :password, nil, placeholder: "Nhập mật khẩu" %>
+
+    <button type="submit">Đăng nhập</button>
+    <div class="d-flex justify-content-center"><%= link_to "Đăng kí", register_path, class: "btn btn-link" %></div>
+  <% end %>
+</div>
+</body>
+</html>
