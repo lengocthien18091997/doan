@@ -73,6 +73,7 @@
           <th>Số điện thoại</th>
           <%= content_tag(:th, "Chuyên môn") if current_user.role == "student" %>
           <th class="text-center">Hành động</th>
+          <%= content_tag(:th, "Trạng thái hợp đồng") if current_user.role == "admin" %>
         </tr>
         </thead>
         <tbody>
@@ -106,6 +107,15 @@
                 <% end %>
               </td>
             <% end %>
+            <% if current_user.role == "admin" %>
+              <td>
+                <% if user.role == "teacher" %>
+                  <%= contract_confirmed_text(user.contract_confirmed) %>
+                <% else %>
+                  -
+                <% end %>
+              </td>
+            <% end %>
             <td class="<%= 'abc' if current_user.role == "admin" %> <%= 'locked' if user.is_locked == true %>">
               <%= link_to user_detail_path(user), method: :get, class: "btn btn-primary" do %>
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-fill" viewBox="0 0 16 16">
@@ -130,6 +140,11 @@
                 </svg>
                 Open
                 <%end %>
+
+                <% if user.role == "teacher" %>
+                  <%= button_to "Xác nhận", user_confirm_contract_path(user), method: :post, class: "btn btn-primary", disabled: user.contract_confirmed %>
+                  <%= link_to "Export hợp đồng", user_contract_path(user), class: "btn btn-secondary" %>
+                <% end %>
               <%end %>
             </td>
           </tr>

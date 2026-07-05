@@ -4,6 +4,7 @@ class ApplicationController < ActionController::Base
   include ApplicationHelper
   include UserHelper
   include QrHelper
+  include ExportHelper
 
   before_action :authorization
   helper_method :current_user

@@ -27,6 +27,23 @@ class UserController < ApplicationController
     render :update
   end
 
+  def registration_form
+    redirect_to user_update_path and return unless @current_user.role == "teacher"
+
+    @current_user.build_teacher_profile if @current_user.teacher_profile.nil?
+    @registration_form = teacher_registration_export(@current_user)
+  end
+
+  def contract_form
+    redirect_to root_path and return unless @current_user.role == "admin"
+
+    @teacher = User.find(params[:id])
+    redirect_to root_path and return unless @teacher.role == "teacher"
+
+    @teacher.build_teacher_profile if @teacher.teacher_profile.nil?
+    @contract_form = teacher_contract_export(@teacher)
+  end
+
   def update
     if @current_user.update(params_update)
       flash[:notice] = "Cập nhật thành công!"
@@ -57,6 +74,21 @@ class UserController < ApplicationController
       flash.now[:alert] = "Cập nhật thất bại, vui lòng kiểm tra lại."
       render :edit, status: :unprocessable_entity
     end
+  end
+
+  def confirm_contract
+    redirect_to root_path and return unless @current_user.role == "admin"
+
+    teacher = User.find(params[:id])
+    redirect_to root_path and return unless teacher.role == "teacher"
+
+    if teacher.update(contract_confirmed: true)
+      flash[:notice] = "Xác nhận hợp đồng thành công!"
+    else
+      flash[:alert] = "Xác nhận hợp đồng thất bại."
+    end
+
+    redirect_to root_path
   end
 
   def detail

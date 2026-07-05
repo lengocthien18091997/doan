@@ -104,7 +104,9 @@
   <%end %>
 
   <div class="form-actions mt-3">
-    <%= link_to "Gửi lời mời", request_path(@user_detail), method: :get, class: "btn btn-success" %>
+    <%if current_user.role != 'admin' %>
+      <%= link_to "Gửi lời mời", request_path(@user_detail), method: :get, class: "btn btn-success" %>
+    <%end %>
     <%= link_to "Quay lại", root_path, class: "btn btn-secondary" %>
   </div>
 </div>

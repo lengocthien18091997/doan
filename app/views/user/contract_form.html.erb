@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Export Hợp đồng</title>
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+  <%= stylesheet_link_tag "application", media: "all", "data-turbo-track": "reload" %>
+</head>
+<body class="index">
+<%= render "common/header" %>
+
+<main class="registration-export-page">
+  <div class="registration-export-actions">
+    <button type="button" class="btn btn-success" onclick="window.print()">Tải về</button>
+    <%= link_to "Quay lại", root_path, class: "btn btn-secondary" %>
+  </div>
+
+  <section class="registration-form-paper contract-form-paper">
+    <div class="registration-form-top">
+      <div>
+        <p><em>BM-06: HỢP ĐỒNG CỘNG TÁC VIÊN GIA SƯ</em></p>
+        <p><strong>Trung Tâm Gia Sư - Dạy Kèm</strong></p>
+        <p><strong>Trí Tuệ Việt</strong></p>
+        <p>Số....<%= @contract_form[:contract_number] %>...</p>
+      </div>
+      <div class="registration-form-national">
+        <p><strong>CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM</strong></p>
+        <p><strong>Độc lập - Tự do - Hạnh phúc</strong></p>
+      </div>
+    </div>
+
+    <p class="registration-form-date">
+      Hà Nội , ngày <%= @contract_form[:export_day].day %>
+      tháng <%= @contract_form[:export_day].month %>
+      năm <%= @contract_form[:export_day].year %>
+    </p>
+
+    <h1>HỢP ĐỒNG CỘNG TÁC VIÊN GIA SƯ</h1>
+
+    <p><strong>BÊN A (TRUNG TÂM GIA SƯ): ...........VnEdu................................................</strong></p>
+    <p>Đại diện: ....Ông <%= @contract_form[:company_representative] %>........ Chức vụ: .......<%= @contract_form[:company_representative_title] %>.........................</p>
+    <p><strong>BÊN B (GIA SƯ/CỘNG TÁC VIÊN): ......&lt;tên gia sư&gt; <%= @contract_form[:full_name] %>.......................</strong></p>
+    <p>Trình độ: .....<%= @contract_form[:education_level] %>...............................................................................................</p>
+    <p>Tỉnh/TP: ....<%= @contract_form[:location] %>...............................................................................................</p>
+
+    <p><strong>Điều 1: Nội dung công việc</strong></p>
+    <ul class="contract-form-list">
+      <li>Gia sư có trách nhiệm chuẩn bị giáo án và giảng dạy theo đúng lịch đã thống nhất với Phụ huynh.</li>
+      <li>Gia sư cần tuân thủ các nội quy của bên A.</li>
+    </ul>
+
+    <p><strong>Điều 2: Trách nhiệm và Quyền lợi</strong></p>
+    <ul class="contract-form-list">
+      <li>Bên B được nhận đủ 100% học phí hằng tháng từ Phụ huynh sau khi hoàn thành thanh toán phí nhận lớp cho Bên A.</li>
+      <li>Bên B cam kết không tự ý bỏ lớp, nhường lớp, hoặc vi phạm đạo đức nghề nghiệp. Nếu vi phạm sẽ bị khóa tài khoản vĩnh viễn và không được hoàn phí.</li>
+    </ul>
+
+    <div class="registration-form-signatures">
+      <div>
+        <strong>ĐẠI DIỆN BÊN A</strong>
+        <em>(Đã kí)</em>
+        <em><%= @contract_form[:company_representative] %></em>
+      </div>
+      <div>
+        <strong>BÊN B (GIA SƯ)</strong>
+        <em>(Đã kí)</em>
+        <em><%= @contract_form[:full_name] %></em>
+      </div>
+    </div>
+  </section>
+</main>
+</body>
+</html>

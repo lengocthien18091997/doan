@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Export Phiếu đăng kí</title>
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+  <%= stylesheet_link_tag "application", media: "all", "data-turbo-track": "reload" %>
+</head>
+<body class="index">
+<%= render "common/header" %>
+
+<main class="registration-export-page">
+  <div class="registration-export-actions">
+    <div class="mb-3">
+      <p>Giáo viên tải biểu mẫu và gửi mail tới <a href="mailto:hr@vnedu.vn">hr@vnedu.vn</a></p>
+    </div>
+
+    <button type="button" class="btn btn-success" onclick="window.print()">Tải về</button>
+    <%= link_to "Quay lại", user_update_path, class: "btn btn-secondary" %>
+  </div>
+
+  <section class="registration-form-paper">
+    <div class="registration-form-top">
+      <div>
+        <p><em>BM-02: PHIẾU ĐĂNG KÝ LÀM GIA SƯ</em></p>
+        <p><strong>Trung Tâm Gia Sư - Dạy Kèm VnEdu</strong></p>
+        <p>Số:.......PDK0<%= current_user.id %>.....</p>
+      </div>
+      <div class="registration-form-national">
+        <p><strong>CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM</strong></p>
+        <p><strong>Độc lập - Tự do - Hạnh phúc</strong></p>
+      </div>
+    </div>
+
+    <p class="registration-form-date">
+      <%= @registration_form[:location] %> , ngày <%= @registration_form[:export_day].day %>
+      tháng <%= @registration_form[:export_day].month %>
+      năm <%= @registration_form[:export_day].year %>
+    </p>
+
+    <h1>PHIẾU ĐĂNG KÝ LÀM GIA SƯ</h1>
+
+    <h2>I. THÔNG TIN CÁ NHÂN</h2>
+    <p>Họ và tên người đăng ký: <span><%= @registration_form[:full_name] %></span></p>
+    <p>Số điện thoại: <span><%= @registration_form[:phone] %></span></p>
+    <p>Email: <span><%= @registration_form[:email] %></span></p>
+    <p>Địa chỉ: <span><%= @registration_form[:address] %></span></p>
+
+    <h2>II. THÔNG TIN HỌC VẤN VÀ CHUYÊN MÔN</h2>
+    <p>Giới thiệu: <span><%= @registration_form[:bio] %></span></p>
+    <p>Trình độ: <span><%= @registration_form[:education_level] %></span></p>
+    <p>Số năm kinh nghiệm: <span><%= @registration_form[:experience_years] %></span></p>
+    <p>Tỉnh/TP: <span><%= @registration_form[:location] %></span></p>
+    <p>Offer: <span><%= @registration_form[:offer] %></span></p>
+
+    <h2>III. THÔNG TIN NGÂN HÀNG</h2>
+    <p>Ngân hàng: <span><%= @registration_form[:bank_name] %></span></p>
+    <p>Mã ngân hàng: <span><%= @registration_form[:bank_code] %></span></p>
+    <p>Số tài khoản: <span><%= @registration_form[:bank_account_number] %></span></p>
+    <p>Tên chủ tài khoản: <span><%= @registration_form[:bank_account_name] %></span></p>
+
+    <div class="registration-form-signatures">
+      <div>
+      </div>
+      <div>
+        <strong>NGƯỜI ĐĂNG KÝ</strong>
+        <em>(Đã kí)</em>
+        <em></em>
+        <em><%= @registration_form[:full_name] %></em>
+      </div>
+    </div>
+  </section>
+</main>
+</body>
+</html>

@@ -6,7 +6,7 @@ class MainController < ApplicationController
     @user = @user.left_joins(teacher_requests: :review).select('users.*', 'AVG(reviews.star) AS star').group('users.id')
     @current_user.reload
     if @current_user.role == 'student'
-      @user = @user.where(role: 'teacher')
+      @user = @user.where(role: 'teacher', contract_confirmed: true)
     end
     search_user
     @user = @user.order(Arel.sql('COALESCE(AVG(reviews.star), 0) DESC')).paginate(page: params[:page], per_page: 3)
