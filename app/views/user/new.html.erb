@@ -7,7 +7,7 @@
 </head>
 <body class="new">
 <div class="login-box">
-  <h2>Teacher Finder</h2>
+  <h2>VnEdu</h2>
 
   <%= render "common/notice" %>
 
@@ -29,8 +29,13 @@
     <label>Nhập lại mật khẩu</label>
     <%= password_field_tag :re_password, nil, placeholder: "Nhập lại mật khẩu" %>
 
-    <button type="submit">Đăng kí</button>
-    <div class="d-flex justify-content-center"><%= link_to "Quay lại đăng nhập", login_path, class: "btn btn-link" %></div>
+
+    <div class="d-flex justify-content-center mt-4">
+      <button type="submit" class="btn">Đăng kí</button>
+    </div>
+    <div class="d-flex justify-content-center">
+      <%= link_to "Quay lại đăng nhập", login_path, class: "btn" %>
+    </div>
   <% end %>
 </div>
 </body>

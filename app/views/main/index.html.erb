@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Find user</title>
+  <title>VnEdu</title>
   <%= csrf_meta_tags %>
   <%= csp_meta_tag %>
   <%= stylesheet_link_tag "application", media: "all", "data-turbo-track": "reload" %>
@@ -25,14 +25,16 @@
       <%= f.text_field :location, value: params[:location], class: "form-control", placeholder: "Nhập khu vực..." %>
     </div>
 
-    <div>
+
       <% if current_user.role == "admin" %>
+      <div>
         <%= f.select :role, options_for_select(
             [["Tất cả", ""], ["Admin", "admin"], ["Gia sư", "teacher"], ["Học viên", "student"]],
             selected: params[:role]
         ), {}, class: "form-select" %>
+      </div>
       <%end %>
-    </div>
+
     <% cap_hoc = tinh_cap_hoc(current_user.date_of_birth) if current_user.role == 'student' %>
     <%= f.select :cap_hoc, options_for_select(
         [["Cấp học", ""], ["Cấp 1", "Cấp 1"], ["Cấp 2", "Cấp 2"], ["Cấp 3", "Cấp 3"]],
@@ -104,7 +106,7 @@
                 <% end %>
               </td>
             <% end %>
-            <td class="<%= 'locked' if user.is_locked == true %> text-center d-flex justify-content-center">
+            <td class="<%= 'abc' if current_user.role == "admin" %> <%= 'locked' if user.is_locked == true %>">
               <%= link_to user_detail_path(user), method: :get, class: "btn btn-primary" do %>
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-fill" viewBox="0 0 16 16">
                   <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0"></path>
@@ -113,7 +115,7 @@
                 Xem chi tiết
               <%end %>
               <%if @current_user.role == 'admin' %>
-                <%= button_to user_lock_path(user), method: :post, class: "btn btn-outline-danger" do %>
+                <%= button_to user_lock_path(user), method: :post, class: "btn btn-outline-danger btn-cus" do %>
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-lock2-fill" viewBox="0 0 16 16">
                     <path d="M7 6a1 1 0 0 1 2 0v1H7z"></path>
                     <path d="M12 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2m-2 6v1.076c.54.166 1 .597 1 1.224v2.4c0 .816-.781 1.3-1.5 1.3h-3c-.719 0-1.5-.484-1.5-1.3V8.3c0-.627.46-1.058 1-1.224V6a2 2 0 1 1 4 0"></path>
@@ -121,7 +123,7 @@
                   Lock
                 <%end %>
 
-                <%= button_to user_unlock_path(user), method: :post, class: "btn btn-success" do %>
+                <%= button_to user_unlock_path(user), method: :post, class: "btn btn-success btn-cus" do %>
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-lock2-fill" viewBox="0 0 16 16">
                   <path d="M7 6a1 1 0 0 1 2 0v1H7z"></path>
                   <path d="M12 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2m-2 6v1.076c.54.166 1 .597 1 1.224v2.4c0 .816-.781 1.3-1.5 1.3h-3c-.719 0-1.5-.484-1.5-1.3V8.3c0-.627.46-1.058 1-1.224V6a2 2 0 1 1 4 0"></path>
@@ -185,7 +187,7 @@
     <!-- Môn - Cấp học -->
     <% subjects = current_user.teacher_profile&.subjects || [] %>
 
-    <div class="form-group">
+    <div class="">
       <%= f.select :mon_cap,
                    options_for_select(
                        [["Môn - Cấp học", ""]] +
@@ -245,7 +247,8 @@
                 <%= button_to "Chấp nhận", request_accep_path(req), method: :post, class: "btn btn-primary" %>
                 <%= button_to "Từ chối", request_denial_path(req), method: :post, class: "btn btn-outline-danger" %>
               <% else %>
-                <%= link_to "Xem học phí", tuition_path, method: :get, class: "btn btn-primary" %>
+                <%= button_to "Chấp nhận", request_accep_path(req), method: :post, class: "btn btn-primary", disabled: true  %>
+                <%= button_to "Từ chối", request_denial_path(req), method: :post, class: "btn btn-outline-danger", disabled: true  %>
               <% end %>
             </td>
           </tr>
@@ -261,15 +264,7 @@
   <% end %>
 <% end %>
 
-<% if current_user.role == "teacher" || current_user.role == "student"%>
-  <div class="form-actions mt-3" style="padding-left: 60px">
-    <%= link_to "Thời khóa biểu", timetable_path, method: :get, class: "btn btn-success" %>
-    <% if current_user.role == "student"%>
-      <%= link_to "Danh sách lời mời", request_list_path, method: :get, class: "btn btn-success ms-2" %>
-    <% end %>
-    <%= link_to "Review", review_list_path, method: :get, class: "btn btn-success ms-2" %>
-  </div>
-<% end %>
+
 
 </body>
 </html>

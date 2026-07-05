@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Find user</title>
+  <title>VnEdu</title>
   <%= csrf_meta_tags %>
   <%= csp_meta_tag %>
   <%= stylesheet_link_tag "application", media: "all", "data-turbo-track": "reload" %>
@@ -125,9 +125,5 @@
 <% else %>
   <p style="text-align:center;">Chưa có lời mời.</p>
 <% end %>
-<div class="form-actions mt-3" style="margin-left: 60px">
-  <%= link_to "Nộp học phí", tuition_path, method: :get, class: "btn btn-success ms-2" %>
-  <%= link_to "Quay lại", root_path, class: "btn btn-secondary" %>
-</div>
 </body>
 </html>

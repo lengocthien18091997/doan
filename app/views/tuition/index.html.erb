@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Find user</title>
+  <title>VnEdu</title>
   <%= csrf_meta_tags %>
   <%= csp_meta_tag %>
   <%= stylesheet_link_tag "application", media: "all", "data-turbo-track": "reload" %>
@@ -34,7 +34,7 @@
         <td><%= t.student_name %></td>
         <td><%= number_to_currency(t.amount, unit: "₫", precision: 0) %></td>
 
-        <td class="text-center justify-content-center">
+        <td class="">
           <% case t.status %>
           <% when "new" %>
             <span class="badge bg-warning">Chờ cọc</span>
@@ -45,7 +45,7 @@
           <% end %>
         </td>
 
-        <td class="text-center d-flex justify-content-center">
+        <td class="">
           <% if current_user && current_user.role == "teacher" %>
 
 
@@ -91,11 +91,6 @@
     <% end %>
     </tbody>
   </table>
-</div>
-
-
-<div class="form-actions mt-3" style="margin-left: 60px">
-  <%= link_to "Quay lại", root_path, class: "btn btn-secondary" %>
 </div>
 </body>
 </html>

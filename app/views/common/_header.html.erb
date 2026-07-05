@@ -2,13 +2,37 @@
   <div>
     <%= link_to root_path, class: "d-flex text-decoration-none" do %>
       <%= image_tag "logo.jpg", alt: "Ảnh đại diện", class: "img-thumbnail", width: 100 %>
-    <p>Find user</p>
+    <p>VnEdu</p>
     <% end %>
   </div>
+
   <div>
     <% if current_user %>
-      <p><%= current_user.role %> - <%= current_user&.full_name %></p>
+      <% if current_user.role == "teacher" || current_user.role == "student"%>
+        <div class="link-header me-4">
+          <%= link_to "Thời khóa biểu", timetable_path, method: :get, class: "" %>
+          <% if current_user.role == "student"%>
+            <%= link_to "Danh sách giáo viên", root_path, method: :get, class: "" %>
+            <%= link_to "Danh sách lời mời", request_list_path, method: :get, class: "" %>
+            <%= link_to "Nộp học phí", tuition_path, method: :get, class: "" %>
+            <%= link_to "Review", review_list_path, method: :get, class: "" %>
+          <% elsif current_user.role == "teacher"%>
+            <%= link_to "Danh sách lời mời", root_path, method: :get, class: "" %>
+            <%= link_to "Xem học phí", tuition_path, method: :get, class: "" %>
+            <%= link_to "Xem Review", review_list_path, method: :get, class: "" %>
+          <% end %>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
 
+  <div>
+    <% if current_user %>
+      <p>
+        <%= current_user.role %>
+        <br>
+        <%= current_user&.full_name %>
+      </p>
       <%= button_to support_path, method: :get, class: "btn-logout", alt: "help" do %>
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-info" viewBox="0 0 16 16">
           <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0"/>
@@ -30,4 +54,4 @@
       <% end %>
       </div>
     <% end %>
-    </div>
+</div>
