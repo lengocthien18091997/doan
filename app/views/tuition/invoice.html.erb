@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Phiếu thu học phí</title>
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+  <%= stylesheet_link_tag "application", media: "all", "data-turbo-track": "reload" %>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-..." crossorigin="anonymous">
+</head>
+<body class="index">
+<%= render "common/header" %>
+
+<main class="registration-export-page p-4">
+  <div class="registration-export-actions mb-4">
+    <button type="button" class="btn btn-success me-2" onclick="window.print()">Tải về</button>
+    <%= link_to "Quay lại", tuition_pay_path(@tuition), class: "btn btn-secondary" %>
+  </div>
+
+  <section class="registration-form-paper p-4">
+    <div class="registration-form-top">
+      <div>
+        <p><em>BM-02: PHIẾU ĐĂNG KÝ LÀM GIA SƯ</em></p>
+        <p><strong>Trung Tâm Gia Sư - Dạy Kèm VnEdu</strong></p>
+        <p>Số:.......<%= @tuition_export[:invoice_number] %>.....</p>
+      </div>
+      <div class="registration-form-national">
+        <p><strong>CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM</strong></p>
+        <p><strong>Độc lập - Tự do - Hạnh phúc</strong></p>
+      </div>
+    </div>
+
+
+
+    <h1 class="text-center mb-4">PHIẾU THU</h1>
+
+    <p class="text-center">Hà Nội, Ngày <%= @tuition_export[:issue_date].day %> tháng <%= @tuition_export[:issue_date].month %> năm <%= @tuition_export[:issue_date].year %></p>
+    <p class="text-center">Số: <strong><%= @tuition_export[:invoice_number] %></strong></p>
+
+    <div class="mb-3">
+      <p>Họ và tên người nộp tiền: <strong><%= @tuition_export[:student_name] %></strong></p>
+      <p>Số điện thoại: <strong><%= @tuition_export[:phone] %></strong></p>
+      <p>Địa chỉ: <strong><%= @tuition_export[:student_address] %></strong></p>
+      <p>Lý do nộp tiền: <strong><%= @tuition_export[:tuition_for] %></strong></p>
+      <p>Số tiền: <strong><%= @tuition_export[:amount] %></strong></p>
+    </div>
+
+    <div class="mb-3">
+      <p>Tài khoản nhận tiền: <strong><%= @tuition_export[:bank_account_number] %></strong></p>
+      <p>Ngân hàng: <strong><%= @tuition_export[:bank_name] %></strong></p>
+    </div>
+
+    <div class="registration-form-signatures">
+      <div>
+      </div>
+      <div>
+        <strong>NGƯỜI NỘP TIỀN</strong>
+        <em>(Đã kí)</em>
+        <em></em>
+        <em><%= @tuition_export[:student_name] %></em>
+      </div>
+    </div>
+
+  </section>
+</main>
+</body>
+</html>

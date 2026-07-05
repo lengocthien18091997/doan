@@ -149,11 +149,15 @@ input[type="submit"]:hover {
     color: var(--color-text) !important;
 }
 
+.btn.btn-secondary {
+    background-color: #868782 !important;
+}
+
 .btn-secondary:hover,
 .btn-link:hover {
-    background-color: #E2E8F0 !important;
+    background-color: #3b3b28 !important;
     border-color: #E2E8F0 !important;
-    color: var(--color-text) !important;
+    color: #DADADA !important;
 }
 
 .btn-danger,
@@ -557,7 +561,7 @@ form.update-form {
 form.update-form .form-group select,
 form.update-form .form-group input,
 form.update-form .form-group textarea {
-    max-width: 560px;
+    /*max-width: 560px;*/
 }
 
 .date-custom select {
@@ -610,6 +614,10 @@ form.update-form .form-group textarea {
     border-radius: 8px;
     background-color: var(--color-card);
     box-shadow: var(--shadow-card);
+}
+
+.user-report-table .table.table-bordered {
+    min-width: 668px
 }
 
 .index th,
@@ -985,16 +993,17 @@ td.abc {
 
 
 .btn-success.btn-cus {
-    background-color: #868782 !important;
-    /*color: var(--color-success) !important;*/
-    cursor: default;
+    background-color: #ecf0f5 !important;
+    border-color:  #ecf0f5 !important;
+    color: #3b3b28 !important;
+    cursor: default !important;
 }
 
 td.locked .btn-success.btn-cus {
     background: var(--color-success) !important;
     border-color: var(--color-success) !important;
     color: #FFFFFF !important;
-    cursor: pointer;
+    cursor: pointer !important;
 }
 
 @media (max-width: 900px) {

@@ -1,0 +1,2 @@
+full_name, email, password, is_lock, phone_number, role, gender, date_of_birth, contract_confirmed
+Giáo viên 8,g@mail8,1,FALSE,896757788,teacher,male,10/25/1995,TRUE

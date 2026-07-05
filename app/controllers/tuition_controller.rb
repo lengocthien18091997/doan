@@ -30,6 +30,13 @@ class TuitionController < ApplicationController
     )
   end
 
+  def invoice
+    @tuition = Tuition.find(params[:id])
+    redirect_to root_path and return unless current_user.role == 'student' || current_user.role == 'admin'
+
+    @tuition_export = tuition_invoice_export(@tuition)
+  end
+
   def deposit
     @tuition = Tuition.find(params[:id])
     @tuition.update(status: "deposit", timetables_id: @tuition.timetables_id)

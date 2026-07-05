@@ -49,4 +49,24 @@ module ExportHelper
       company_representative_title: "Giám đốc"
     }
   end
+
+  def tuition_invoice_export(tuition)
+    teacher = tuition.teacher
+    student = tuition.student
+    profile = teacher.teacher_profile
+
+    {
+      invoice_number: "PT0#{tuition.id}",
+      issue_date: Time.zone.today,
+      student_name: export_blank(student.full_name),
+      student_address: export_blank(''),
+      phone: export_blank(student&.phone_number),
+      tuition_for: "Học phí #{tuition.student.full_name}",
+      amount: export_money(tuition.amount / 2),
+      amount_number: tuition.amount / 2,
+      account_name: export_blank(profile.bank_account_name),
+      bank_name: export_blank(profile.bank_name),
+      bank_account_number: export_blank(profile.bank_account_number)
+    }
+  end
 end

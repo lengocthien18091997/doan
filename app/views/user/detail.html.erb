@@ -23,7 +23,7 @@
     <span><%= @user_detail.full_name %></span>
   </div>
 
-  <%if @current_user.role = 'admin' %>
+  <%if @current_user.role == "admin" %>
     <div class="form-group">
       <%= label :role, "Vai trò" %>
       <span><%= @user_detail.role %></span>
@@ -104,7 +104,7 @@
   <%end %>
 
   <div class="form-actions mt-3">
-    <%if current_user.role != 'admin' %>
+    <%if current_user.role != "admin" %>
       <%= link_to "Gửi lời mời", request_path(@user_detail), method: :get, class: "btn btn-success" %>
     <%end %>
     <%= link_to "Quay lại", root_path, class: "btn btn-secondary" %>

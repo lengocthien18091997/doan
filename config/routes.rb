@@ -25,6 +25,9 @@ Rails.application.routes.draw do
     post "/user_lock/:id", to: "user#lock", as: "user_lock"
     post "/user_unlock/:id", to: "user#unlock", as: "user_unlock"
     get "/user_detail/:id", to: "user#detail", as: "user_detail"
+    get "/user_export", to: "main#export_users", as: "user_export"
+    get "/user_import", to: "main#new_user_import", as: "user_import"
+    post "/user_import", to: "main#import_users", as: "user_import_create"
 
     get "/request/list", to: "request#list", as: "request_list"
     post "/request_accep/:id", to: "request#accep", as: "request_accep"
@@ -46,6 +49,7 @@ Rails.application.routes.draw do
     get "/tuition_pay/:id", to: "tuition#pay", as: "tuition_pay"
     post "/tuition_deposit/:id", to: "tuition#deposit", as: "tuition_deposit"
     post "/tuition_complete/:id", to: "tuition#complete", as: "tuition_complete"
+    get "/tuition_invoice/:id", to: "tuition#invoice", as: "tuition_invoice"
 
     get "/review", to: "review#list", as: "review_list"
     post "/review", to: "review#create", as: "review_create"

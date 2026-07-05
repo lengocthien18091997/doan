@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Báo cáo danh sách user</title>
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+  <%= stylesheet_link_tag "application", media: "all", "data-turbo-track": "reload" %>
+</head>
+<body class="index">
+<%= render "common/header" %>
+
+<main class="registration-export-page">
+  <div class="registration-export-actions">
+    <button type="button" class="btn btn-success" onclick="window.print()">Tải về</button>
+    <%= link_to "Quay lại", root_path, class: "btn btn-secondary" %>
+  </div>
+
+  <section class="registration-form-paper">
+    <div class="registration-form-top">
+      <div>
+        <p><strong>Trung Tâm Gia Sư - Dạy Kèm VnEdu</strong></p>
+        <p>Số:.......USER-<%= Time.zone.today.strftime('%Y%m%d') %>.....</p>
+      </div>
+      <div class="registration-form-national">
+        <p><strong>CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM</strong></p>
+        <p><strong>Độc lập - Tự do - Hạnh phúc</strong></p>
+      </div>
+    </div>
+
+    <p class="registration-form-date">
+      <%= @export_date %>
+    </p>
+
+    <h1>BÁO CÁO DANH SÁCH NGƯỜI DÙNG</h1>
+
+    <div class="user-report-table">
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Số thứ tự</th>
+            <th>Họ và tên</th>
+            <th>Email</th>
+            <th>Số điện thoại</th>
+            <th>Trạng thái hợp đồng</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @user.each_with_index do |user, index| %>
+            <tr>
+              <td><%= index + 1 %></td>
+              <td><%= user.full_name %></td>
+              <td><%= user.email %></td>
+              <td><%= user.phone_number %></td>
+              <td><%= contract_confirmed_text(user.contract_confirmed) %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</main>
+</body>
+</html>

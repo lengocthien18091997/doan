@@ -48,10 +48,18 @@
     <div>
       <%= f.submit "Tìm kiếm", class: "btn btn-success w-100" %>
     </div>
-
     <div>
       <%= link_to "Đặt lại", root_path, class: "btn btn-success w-100" %>
     </div>
+
+    <% if current_user.role == "admin" %>
+      <div>
+        <%= link_to "Export user", user_export_path, class: "btn btn-success w-100" %>
+      </div>
+      <div>
+        <%= link_to "Import user", user_import_path, class: "btn btn-success w-100" %>
+      </div>
+    <% end %>
   <% end %>
 
 
