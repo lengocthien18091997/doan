@@ -3,7 +3,7 @@ class ReviewController < ApplicationController
   def list
     @role = current_user.role == "teacher" ? 0 : 1
 
-    if @role.zero?
+    if current_user.role == "teacher"
       # Teacher → xem review của student
       @requests = Request
                       .joins(:student)
@@ -16,7 +16,7 @@ class ReviewController < ApplicationController
        reviews.star,
        reviews.comment"
                       )
-    else
+    elsif current_user.role == "student"
       # Student → xem review của teacher
       @requests = Request.joins(:teacher).left_joins(:review).where(student_id: current_user.id).select(
                           "requests.*,
@@ -24,9 +24,15 @@ class ReviewController < ApplicationController
        reviews.id AS review_id,
        reviews.star,
        reviews.comment"
-                      )
+      ).order(Arel.sql("reviews.id IS NULL DESC, requests.id DESC"))
+    else
+      # Admin → xem all review
+      @requests = Request
+                      .joins(:student)
+                      .left_joins(:review)
+                      .select("requests.*, users.full_name AS user_full_name, reviews.id AS review_id, reviews.star, reviews.comment" )
     end
-
+    @requests = @requests.paginate(page: params[:page], per_page: Constant::LIMIT_PER_PAGE)
   end
 
   def create

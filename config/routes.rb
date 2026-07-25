@@ -15,6 +15,8 @@ Rails.application.routes.draw do
     post "/login",  to: "sessions#create"
     delete "/logout", to: "sessions#destroy"
 
+    get "/dashboard", to: "main#dashboard", as: "dashboard"
+
     get "/register", to: "user#new"
     post "/register", to: "user#create"
     get "/user_update", to: "user#get"

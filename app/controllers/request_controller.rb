@@ -7,7 +7,7 @@ class RequestController < ApplicationController
 
   def create
     # set_teacher
-    old_request = Request.where(student_id: current_user)
+    old_request = Request.where(student_id: current_user).where.not(status: 'closed')
     # binding.pry
     if params[:teacher_full_name].blank? || params[:mon_cap].blank? || params[:date_time].blank? || params[:location].blank? || params[:budget].blank?
       flash.now[:alert] = "Vui lòng nhập đầy đủ thông tin!"
@@ -56,7 +56,7 @@ class RequestController < ApplicationController
   #                    .where(teacher_id: @current_user.id)
   #                    .select("requests.*, users.full_name AS full_name")
   #   end
-  #   @request = @request.paginate(page: params[:page], per_page: 3)
+  #   @request = @request.paginate(page: params[:page], per_page: Constant::LIMIT_PER_PAGE)
   # end
 
   def list
@@ -67,12 +67,12 @@ class RequestController < ApplicationController
 
     @request =
         if @current_user.role == 'student'
-          base_query.where(student_id: @current_user.id)
+          base_query.where(student_id: @current_user.id).order(Arel.sql("CASE WHEN requests.status = 'open' THEN 0 ELSE 1 END, requests.id DESC"))
         else
-          base_query.where(teacher_id: @current_user.id)
+          base_query.where(teacher_id: @current_user.id).order(Arel.sql("CASE WHEN requests.status = 'open' THEN 0 ELSE 1 END, requests.id DESC"))
         end
 
-    @request = @request.paginate(page: params[:page], per_page: 3)
+    @request = @request.paginate(page: params[:page], per_page: Constant::LIMIT_PER_PAGE)
   end
 
 

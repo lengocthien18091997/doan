@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>VnEdu Dashboard</title>
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+  <%= stylesheet_link_tag "application", media: "all", "data-turbo-track": "reload" %>
+</head>
+<body class="index dashboard-page">
+
+<%= render "common/header" %>
+<%= render "common/notice" %>
+
+<% nav_items =
+  if current_user.role == "admin"
+    [
+      [:dashboard, "Dashboard", dashboard_path, true],
+      [:tutors, "User / User", user_export_path, false],
+      [:courses, "Courses", root_path, false],
+      [:schedule, "Schedule", timetable_path, false],
+      [:payments, "Payments", tuition_path, false]
+    ]
+  elsif current_user.role == "teacher"
+    [
+      [:dashboard, "Dashboard", dashboard_path, true],
+      [:courses, "Courses", root_path, false],
+      [:tutors, "Tutors", request_list_path, false],
+      [:schedule, "Schedule", timetable_path, false],
+      [:payments, "Payments", tuition_path, false],
+      [:reviews, "Reviews", review_list_path, false]
+    ]
+  else
+    [
+      [:dashboard, "Dashboard", dashboard_path, true],
+      [:courses, "Courses", root_path, false],
+      [:tutors, "Tutors", root_path, false],
+      [:schedule, "Schedule", timetable_path, false],
+      [:payments, "Payments", tuition_path, false]
+    ]
+  end %>
+
+<div class="dashboard-shell">
+
+  <aside class="dashboard-sidebar">
+<!--    <nav class="dashboard-nav" aria-label="Dashboard navigation">-->
+      <%# nav_items.each do |icon, label, path, active| %>
+        <%#= link_to path, class: "dashboard-nav__link #{'active' if active}" do %>
+          <%#= ui_icon(icon, size: 26) %>
+<!--          <span><%#= label %></span>-->
+        <%# end %>
+      <%# end %>
+<!--    </nav>-->
+  </aside>
+
+  <main class="dashboard-content">
+    <% if current_user.role == "student" %>
+      <div class="stat-grid stat-grid--student">
+        <%= render "common/dashboard_stat", label: "Khóa học đang học", value: @dashboard[:accepted_count], icon: :book, tone: "blue" %>
+        <%= render "common/dashboard_stat", label: "Khóa đã học", value: @dashboard[:open_count], icon: :user_plus, tone: "amber" %>
+        <%= render "common/dashboard_stat", label: "Học phí chưa thanh toán", value: number_to_currency(@dashboard[:outstanding_tuitions].sum(:amount), unit: "", delimiter: ",", precision: 0) + " đ", icon: :money, tone: "red" %>
+        <%= render "common/dashboard_stat", label: "Đánh giá chưa gửi", value: @dashboard[:pending_review_count], icon: :invite, tone: "purple" %>
+      </div>
+
+      <div class="dashboard-row">
+        <section class="panel">
+          <div class="panel__header"><h2>Lịch học tuần này</h2><strong><%= @dashboard[:timetable_entries].count %> buổi học</strong></div>
+          <div class="table-responsive">
+            <table class="dashboard-table">
+              <thead><tr><th>Thứ</th><th>Buổi</th><th>Môn học</th><th>Tên gia sư</th><th>Địa điểm</th></tr></thead>
+              <tbody>
+                <% @dashboard[:timetable_entries].each do |item| %>
+                  <% item.schedule.each do |day, session| %>
+                    <tr><td><%= day %></td><td><%= session %></td><td><%= item.subject %></td><td><%= item.teacher.full_name %></td><td><%= item.location %></td></tr>
+                  <% end %>
+                <% end %>
+                <% if @dashboard[:timetable_entries].blank? %><tr><td colspan="5">Chưa có lịch học trong tuần.</td></tr><% end %>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel__header"><h2>Học phí cần nộp</h2><strong><%= @dashboard[:outstanding_tuitions].count %> khoản</strong></div>
+          <div class="table-responsive">
+            <table class="dashboard-table dashboard-table--compact">
+              <thead><tr><th>Tên gia sư - Môn</th><th>Số tiền</th><th></th></tr></thead>
+              <tbody>
+                <% @dashboard[:outstanding_tuitions].each do |tuition| %>
+                  <tr>
+                    <td><%= tuition.teacher.full_name %> - <%= tuition.timetable&.subject || tuition.request&.subject || "N/A" %></td>
+                    <td><%= number_to_currency(tuition.amount, unit: "", delimiter: ",", precision: 0) %> đ</td>
+                    <td><%= link_to "Nộp ngay", tuition_pay_path(tuition), class: "btn btn-warning btn-sm" %></td>
+                  </tr>
+                <% end %>
+                <% if @dashboard[:outstanding_tuitions].blank? %><tr><td colspan="3">Không có khoản phí cần nộp.</td></tr><% end %>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+
+      <section class="panel panel--full">
+        <div class="panel__header"><h2>Gợi ý gia sư nổi bật</h2></div>
+        <div class="teacher-cards">
+          <% @dashboard[:top_teachers].first(3).each do |teacher| %>
+            <div class="teacher-card">
+              <span class="teacher-card__avatar"><%= avatar_initials(teacher) %></span>
+              <div class="teacher-card__body">
+                <h3><%= teacher.full_name %></h3>
+                <div class="teacher-card__rating"><%= ui_icon(:star, size: 16) %> <%= teacher.avg_star.to_f.round(1) %></div>
+                <div class="teacher-card__meta"><%= teacher.teacher_profile&.subjects&.keys&.join(" | ") || "Chưa có môn học" %></div>
+                <%= link_to "Xem hồ sơ", user_detail_path(teacher), class: "btn btn-primary btn-sm" %>
+              </div>
+            </div>
+          <% end %>
+          <% if @dashboard[:top_teachers].blank? %><p>Chưa có giáo viên nổi bật.</p><% end %>
+        </div>
+      </section>
+
+    <% elsif current_user.role == "teacher" %>
+      <div class="stat-grid--teacher stat-grid--teacher">
+        <%= render "common/dashboard_stat", label: "Lời mời mới", value: @dashboard[:open_count], icon: :book, tone: "blue" %>
+        <%= render "common/dashboard_stat", label: "Đã xác nhận/chờ cọc", value: @dashboard[:accepted_count_coc], icon: :user_plus, tone: "green" %>
+        <%= render "common/dashboard_stat", label: "Đang dạy", value: @dashboard[:accepted_count], icon: :user_plus, tone: "green" %>
+        <%= render "common/dashboard_stat", label: "Học phí chờ xác nhận", value: number_to_currency(@dashboard[:waiting_tuition_amount], unit: "", delimiter: ",", precision: 0) + " đ", icon: :money, tone: "amber" %>
+        <%= render "common/dashboard_stat", label: "Điểm đánh giá trung bình", value: "#{@dashboard[:average_rating]} ★", icon: :star, tone: "yellow" %>
+      </div>
+
+      <div class="dashboard-row">
+        <section class="panel">
+          <div class="panel__header"><h2>Lời mời mới chờ xử lý</h2><strong><%= @dashboard[:open_requests].count %> lời mời</strong></div>
+          <div class="table-responsive">
+            <table class="dashboard-table">
+              <thead><tr><th>Học sinh</th><th>Môn học</th><th>Lịch học đề xuất</th><th>Học phí đề xuất</th><th></th></tr></thead>
+              <tbody>
+                <% @dashboard[:open_requests].each do |req| %>
+                  <tr>
+                    <td><%= req.student.full_name %></td><td><%= req.subject %></td>
+                    <td><%= req.schedule.map { |d, s| "#{d} - #{s}" }.join(", ") %></td>
+                    <td><%= number_to_currency(req.budget, unit: "", delimiter: ",", precision: 0) %> đ</td>
+                    <td class="table-actions"><%= button_to "Chấp nhận", request_accep_path(req), method: :post, class: "btn btn-success btn-sm" %><%= button_to "Từ chối", request_denial_path(req), method: :post, class: "btn btn-danger btn-sm" %></td>
+                  </tr>
+                <% end %>
+                <% if @dashboard[:open_requests].blank? %><tr><td colspan="5">Không có lời mời mới.</td></tr><% end %>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <%= render "common/income_panel" %>
+      </div>
+
+      <section class="panel panel--full">
+        <div class="panel__header"><h2>Lịch dạy tuần này</h2><%= link_to "Xem đầy đủ", timetable_path, class: "btn btn-secondary btn-sm" %></div>
+        <div class="table-responsive">
+          <table class="dashboard-table dashboard-table--mini">
+            <thead>
+              <th>Thứ 2</th>
+              <th>Thứ 3</th>
+              <th>Thứ 4</th>
+              <th>Thứ 5</th>
+              <th>Thứ 6</th>
+              <th>Thứ 7</th>
+              <th>Chủ nhật</th>
+            </thead>
+            <tbody>
+              <% @session_blocks.each do |session| %>
+                <tr>
+                  <% @week_days.each do |day| %>
+                    <% cell = @dashboard[:weekly_schedule].detect { |item| item.schedule[day] == session } %>
+                    <td><strong><%= cell&.subject || "　" %></strong><br><span><%= cell&.student&.full_name || "　" %></span></td>
+                  <% end %>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    <% elsif current_user.role == "admin" %>
+      <div class="stat-grid stat-grid--admin">
+        <%= render "common/dashboard_stat", label: "Tổng gia sư", value: @dashboard[:teacher_count], icon: :user, tone: "blue" %>
+        <%= render "common/dashboard_stat", label: "Tổng học sinh", value: @dashboard[:student_count], icon: :user_plus, tone: "teal" %>
+        <%= render "common/dashboard_stat", label: "Chờ duyệt tài khoản", value: @dashboard[:pending_contracts_count], icon: :invite, tone: "amber" %>
+        <%= render "common/dashboard_stat", label: "Tài khoản bị khóa", value: @dashboard[:locked_accounts_count], icon: :lock, tone: "red" %>
+        <%= render "common/dashboard_stat", label: "Khóa học đang diễn ra", value: @dashboard[:active_courses_count], icon: :book, tone: "green" %>
+      </div>
+
+      <div class="dashboard-row">
+        <section class="panel">
+          <div class="panel__header"><h2>Gia sư chờ duyệt tài khoản</h2><strong><%= @dashboard[:pending_teachers].count %> tài khoản</strong></div>
+          <div class="table-responsive">
+            <table class="dashboard-table">
+              <thead><tr><th>Tên</th><th>Email</th><th>Ngày đăng ký</th><th></th></tr></thead>
+              <tbody>
+                <% @dashboard[:pending_teachers].each do |teacher| %>
+                  <tr><td><%= teacher.full_name %></td><td><%= teacher.email %></td><td><%= teacher.created_at.strftime("%d/%m/%Y") %></td><td class="table-actions"><%= button_to "Xác nhận", user_confirm_contract_path(teacher), method: :post, class: "btn btn-success btn-sm" %><%= link_to "Xem chi tiết", user_detail_path(teacher), class: "btn btn-primary btn-sm" %></td></tr>
+                <% end %>
+                <% if @dashboard[:pending_teachers].blank? %><tr><td colspan="4">Không có gia sư chờ duyệt.</td></tr><% end %>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel__header"><h2>Phân bổ người dùng</h2><strong><%= @dashboard[:user_distribution][:teacher] + @dashboard[:user_distribution][:student] + @dashboard[:user_distribution][:admin] %> người dùng</strong></div>
+          <% total_users = @dashboard[:user_distribution].values.sum.nonzero? || 1 %>
+          <% teacher_pct = (@dashboard[:user_distribution][:teacher].to_f / total_users * 100).round %>
+          <% student_pct = (@dashboard[:user_distribution][:student].to_f / total_users * 100).round %>
+          <div class="pie-chart" style="--teacher:<%= teacher_pct %>%; --student:<%= teacher_pct + student_pct %>%;"></div>
+          <div class="pie-legend">Gia sư / Học sinh / Admin<br>
+            <strong>
+              <%= @dashboard[:user_distribution].values.join(" &nbsp;&nbsp; ").html_safe %>
+            </strong>
+          </div>
+        </section>
+      </div>
+
+      <div class="dashboard-row">
+        <section class="panel"><div class="panel__header"><h2>Thống kê khóa học theo tháng</h2><strong><%= @dashboard[:monthly_courses].count %> khóa học</strong></div><%= render "common/course_chart" %></section>
+        <section class="panel">
+          <div class="panel__header"><h2>Tài khoản bị khóa gần đây</h2><strong><%= @dashboard[:locked_accounts_count] %> tài khoản</strong></div>
+          <div class="table-responsive"><table class="dashboard-table dashboard-table--compact"><thead><tr><th>Tên</th><th>Email</th><th></th></tr></thead><tbody>
+            <% @dashboard[:recent_locked].each do |user| %><tr><td><%= user.full_name %></td><td><%= user.email %></td><td><%= button_to "Mở khóa", user_unlock_path(user), method: :post, class: "btn btn-success btn-sm" %></td></tr><% end %>
+            <% if @dashboard[:recent_locked].blank? %><tr><td colspan="3">Không có tài khoản bị khóa gần đây.</td></tr><% end %>
+          </tbody></table></div>
+        </section>
+      </div>
+    <% end %>
+  </main>
+</div>
+
+</body>
+</html>

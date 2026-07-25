@@ -13,6 +13,106 @@
 
 <%= render "common/notice" %>
 
+<% unless current_user %>
+  <main class="guest-page">
+    <section class="guest-list">
+      <%= form_with url: root_path, method: :get, local: true, class: "search guest-search" do |f| %>
+        <div><%= f.text_field :query, value: params[:query], class: "form-control", placeholder: "Nhập tên hoặc email..." %></div>
+        <div><%= f.text_field :location, value: params[:location], class: "form-control", placeholder: "Nhập khu vực..." %></div>
+        <%= f.select :cap_hoc, options_for_select([["Cấp học", ""], ["Cấp 1", "Cấp 1"], ["Cấp 2", "Cấp 2"], ["Cấp 3", "Cấp 3"]], selected: params[:cap_hoc]), {}, class: "form-select w-auto" %>
+        <%= f.select :mon_hoc, options_for_select([["Môn học", ""], %w(Toán Toán), %w(Lý Lý), %w(Hóa Hóa), %w(Sinh Sinh), %w(Văn Văn), %w(Sử Sử), %w(Địa Địa), %w(Anh Anh)], selected: params[:mon_hoc]), {}, class: "form-select w-auto" %>
+        <div><%= f.submit "Tìm kiếm", class: "btn btn-success w-100" %></div>
+        <div><%= link_to "Đặt lại", root_path, class: "btn btn-success w-100" %></div>
+      <% end %>
+
+      <h2>Danh sách giáo viên</h2>
+
+      <% if @user.present? %>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Họ tên</th>
+                <th>Email</th>
+                <th>Số điện thoại</th>
+                <th>Chuyên môn</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @user.each do |user| %>
+                <tr>
+                  <td class="teacher-cell">
+                    <% if user.star.to_f >= 3 %>
+                      <span class="star-flag">★ <%= user.star.to_f.round(1) %></span>
+                    <% end %>
+                    <span class="teacher-name"><%= user.full_name %></span>
+                  </td>
+                  <td><%= user.email %></td>
+                  <td><%= user.phone_number %></td>
+                  <td>
+                    <% if user.teacher_profile&.subjects.present? %>
+                      <ul class="d-inline-block m-0 ps-3">
+                        <% user.teacher_profile.subjects.each do |subject, level| %>
+                          <li><%= "#{subject} - #{level}" %></li>
+                        <% end %>
+                      </ul>
+                    <% else %>
+                      <span>Chưa có môn học</span>
+                    <% end %>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+        <div class="pagination"><%= will_paginate @user %></div>
+      <% else %>
+        <p style="text-align:center;">Chưa có giáo viên.</p>
+      <% end %>
+    </section>
+
+    <section class="guest-teacher-cta">
+      <div>
+        <h2>Đăng ký dành cho gia sư và giáo viên</h2>
+        <p>Dạy thêm - Tăng thu nhập</p>
+      </div>
+      <%= link_to "Đăng ký ngay", register_path, class: "guest-teacher-cta__button" %>
+    </section>
+  </main>
+
+  <footer class="guest-footer">
+    <div class="guest-footer__brand">
+      <%= image_tag "logo.jpg", alt: "VnEdu", class: "guest-footer__logo" %>
+      <div class="guest-footer__socials">
+        <a href="https://www.facebook.com/" target="_blank" và rel="noopener noreferrer">
+          <span>f</span>
+        </a>
+        <a href="https://chat.zalo.me" target="_blank" và rel="noopener noreferrer">
+          <span>Zalo</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="guest-footer__links">
+      <div>
+        <h3>Lớp học Gia Sư</h3>
+        <%= link_to "Tuyển học sinh", register_path %>
+        <%= link_to "Tìm gia sư", root_path %>
+        <%= link_to "Đội ngũ gia sư", root_path %>
+        <h3>Trung tâm dạy học</h3>
+        <%= link_to "Các trung tâm", root_path %>
+        <%= link_to "Trung tâm tuyển sinh", root_path %>
+      </div>
+      <div>
+        <h3>Tin tức</h3>
+        <%= link_to "Tin kết nối gia sư", root_path %>
+        <%= link_to "Tin giáo dục", "https://vnexpress.net/giao-duc", target: "_blank", rel: "noopener" %>
+      </div>
+    </div>
+  </footer>
+
+<% end %>
+
 <% if current_user &&  (current_user.role == "admin" || current_user.role == "student")%>
 
   <!-- Thanh tìm kiếm -->
@@ -80,8 +180,8 @@
           <th>Email</th>
           <th>Số điện thoại</th>
           <%= content_tag(:th, "Chuyên môn") if current_user.role == "student" %>
-          <th class="text-center">Hành động</th>
           <%= content_tag(:th, "Trạng thái hợp đồng") if current_user.role == "admin" %>
+          <th class="text-center">Hành động</th>
         </tr>
         </thead>
         <tbody>

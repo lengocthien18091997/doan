@@ -21,6 +21,7 @@
     <tr>
       <th>Giáo viên</th>
       <th>Học sinh</th>
+      <th>Môn học</th>
       <th>Tổng học phí</th>
       <th>Trạng thái</th>
       <th>Action</th>
@@ -32,6 +33,7 @@
       <tr>
         <td><%= t.teacher_name %></td>
         <td><%= t.student_name %></td>
+        <td><%= "#{t.subject} - #{t.schedule.keys.first}" %></td>
         <td><%= number_to_currency(t.amount, unit: "₫", precision: 0) %></td>
 
         <td class="">

@@ -1,0 +1,13 @@
+<div class="bar-chart bar-chart--grouped">
+  <% max_total = @dashboard[:monthly_courses].map { |m| [m[:open_count], m[:closed_count]].max }.max.to_f.nonzero? || 1 %>
+  <% @dashboard[:monthly_courses].each do |month| %>
+    <div class="bar-chart__item">
+      <span class="bar-chart__pair">
+        <span class="bar-chart__bar" style="height:<%= [(month[:open_count].to_f / max_total * 118).round, 14].max %>px"></span>
+        <span class="bar-chart__bar bar-chart__bar--green" style="height:<%= [(month[:closed_count].to_f / max_total * 118).round, 14].max %>px"></span>
+      </span>
+      <small><%= month[:label] %></small>
+    </div>
+  <% end %>
+</div>
+<div class="chart-legend"><span></span> Khóa học mới <span class="green"></span> Khóa hoàn thành</div>

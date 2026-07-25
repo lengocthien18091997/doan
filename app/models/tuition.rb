@@ -2,6 +2,7 @@ class Tuition < ActiveRecord::Base
   belongs_to :student, class_name: 'User'
   belongs_to :teacher, class_name: 'User'
   belongs_to :timetable, class_name: 'Timetable', optional: true
+  belongs_to :request, optional: true
 
   STATUSES = %w[new deposit payed]
 

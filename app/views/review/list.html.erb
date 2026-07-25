@@ -69,10 +69,11 @@
             <% end %>
           </tr>
         <% end %>
-
-
         </tbody>
       </table>
+       <div class="pagination">
+         <%= will_paginate @requests %>
+       </div>
     </div>
 
 </body>

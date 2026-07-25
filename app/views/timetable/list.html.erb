@@ -36,7 +36,24 @@
             <div><small><%= cell.teacher.full_name %></small></div>
             <div><small><%= cell.student.full_name %></small></div>
             <div><small>(<%= cell.location %>)</small></div>
-            <% if cell.status != "closed" && @current_user.role == "teacher" %>
+            <div>
+              <small>
+                (
+                <%=
+                  case cell.tuitions_status
+                  when "new"
+                    "Chưa cọc"
+                  when "deposit"
+                    "Đã cọc"
+                  when "payed"
+                    "Đã nộp tiền"
+                  else
+                    ""
+                  end
+                %>)
+              </small>
+            </div>
+            <% if cell.status != "closed" && @current_user.role == "teacher" && cell.tuitions_status == "payed" %>
               <%= button_to "Done",
                             timetable_done_path(cell.id),
                             method: :post,
@@ -90,6 +107,6 @@
 <%# else %>
 <!--  <p style="text-align:center;">Chưa thời khóa biểu.</p>-->
 <%# end %>
-
+ h
 </body>
 </html>

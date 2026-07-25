@@ -1,0 +1,13 @@
+<section class="panel">
+  <div class="panel__header"><h2>Thu nhập theo tháng</h2><strong><%= number_to_currency(@dashboard[:current_month_income], unit: "", delimiter: ",", precision: 0) %> đ</strong></div>
+  <div class="bar-chart">
+    <% max_income = @dashboard[:monthly_income].map { |m| m[:total] }.max.to_f.nonzero? || 1 %>
+    <% @dashboard[:monthly_income].each do |month| %>
+      <div class="bar-chart__item">
+        <span class="bar-chart__bar" style="height:<%= [(month[:total].to_f / max_income * 132).round, 18].max %>px"></span>
+        <small><%= month[:label] %></small>
+      </div>
+    <% end %>
+  </div>
+  <p class="chart-summary">Total earnings for current month<br><strong>payed <%= number_to_currency(@dashboard[:current_month_income], unit: "", delimiter: ",", precision: 0) %> đ</strong></p>
+</section>

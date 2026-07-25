@@ -1,17 +1,28 @@
 class TuitionController < ApplicationController
 
   def index
-    dk = current_user.role == 'teacher' ? "teacher_id = #{current_user.id}" : "student_id = #{current_user.id}"
+    # dk = current_user.role == 'teacher' ? "teacher_id = #{current_user.id}" : "student_id = #{current_user.id}"
+    # @tuitions = Tuition
+    #                 .joins(:teacher, :student)
+    # .select("tuitions.*, teachers.full_name AS teacher_name, students.full_name AS student_name, timetables.subject, timetables.schedule")
+    #                 .joins("JOIN users teachers ON teachers.id = tuitions.teacher_id")
+    #                 .joins("JOIN users students ON students.id = tuitions.student_id")
+    #                 .joins('JOIN timetables ON timetables.id = tuitions.timetables_id')
+    #     .where(dk).order(:id)
+
+    dk = if current_user.role == 'teacher'
+           ["tuitions.teacher_id = ?", current_user.id]
+         else
+           ["tuitions.student_id = ?", current_user.id]
+         end
+
     @tuitions = Tuition
-                    .joins(:teacher, :student)
-                    .select(
-                        "tuitions.*,
-         teachers.full_name AS teacher_name,
-         students.full_name AS student_name"
-                    )
                     .joins("JOIN users teachers ON teachers.id = tuitions.teacher_id")
                     .joins("JOIN users students ON students.id = tuitions.student_id")
-        .where(dk).order(:id)
+                    .joins("JOIN timetables ON timetables.id = tuitions.timetables_id")
+                    .select("tuitions.*, teachers.full_name AS teacher_name, students.full_name AS student_name, timetables.subject, timetables.schedule")
+                    .where(dk)
+                    .order(:id)
 
   end
 
