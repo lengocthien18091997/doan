@@ -4,7 +4,7 @@ class Tuition < ActiveRecord::Base
   belongs_to :timetable, class_name: 'Timetable', optional: true
   belongs_to :request, optional: true
 
-  STATUSES = %w[new deposit payed]
+  STATUSES = [Constant::TUITION_STATUS_NEW, Constant::TUITION_STATUS_DEPOSIT, Constant::TUITION_STATUS_PAYED]
 
   validates :amount, numericality: { greater_than: 0 }
   validates :status, inclusion: { in: STATUSES }

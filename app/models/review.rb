@@ -1,7 +1,7 @@
 class Review < ActiveRecord::Base
   belongs_to :request
 
-  enum role: { teacher: 0, student: 1 }
+  enum role: { teacher: Constant::REVIEW_ROLE_TEACHER, student: Constant::REVIEW_ROLE_STUDENT }
   enum star: {
       one: 1,
       two: 2,

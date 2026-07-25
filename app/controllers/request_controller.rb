@@ -7,7 +7,7 @@ class RequestController < ApplicationController
 
   def create
     # set_teacher
-    old_request = Request.where(student_id: current_user).where.not(status: 'closed')
+    old_request = Request.where(student_id: current_user).where.not(status: Constant::REQUEST_STATUS_CLOSED)
     # binding.pry
     if params[:teacher_full_name].blank? || params[:mon_cap].blank? || params[:date_time].blank? || params[:location].blank? || params[:budget].blank?
       flash.now[:alert] = "Vui lòng nhập đầy đủ thông tin!"
@@ -41,7 +41,7 @@ class RequestController < ApplicationController
       budget: params[:budget],
       location: params[:location],
       schedule: date_time,
-      status: 'open'
+      status: Constant::REQUEST_STATUS_OPEN
     )
     redirect_to request_list_path
   end
@@ -66,10 +66,10 @@ class RequestController < ApplicationController
                      .select("requests.*, users.full_name AS teacher_name")
 
     @request =
-        if @current_user.role == 'student'
-          base_query.where(student_id: @current_user.id).order(Arel.sql("CASE WHEN requests.status = 'open' THEN 0 ELSE 1 END, requests.id DESC"))
+        if @current_user.role == Constant::ROLE_STUDENT
+          base_query.where(student_id: @current_user.id).order(Arel.sql("CASE WHEN requests.status = '#{Constant::REQUEST_STATUS_OPEN}' THEN 0 ELSE 1 END, requests.id DESC"))
         else
-          base_query.where(teacher_id: @current_user.id).order(Arel.sql("CASE WHEN requests.status = 'open' THEN 0 ELSE 1 END, requests.id DESC"))
+          base_query.where(teacher_id: @current_user.id).order(Arel.sql("CASE WHEN requests.status = '#{Constant::REQUEST_STATUS_OPEN}' THEN 0 ELSE 1 END, requests.id DESC"))
         end
 
     @request = @request.paginate(page: params[:page], per_page: Constant::LIMIT_PER_PAGE)
@@ -78,14 +78,14 @@ class RequestController < ApplicationController
 
   def accep
     req = Request.find(params[:id])
-    req.update!(status: "accepted")
+    req.update!(status: Constant::REQUEST_STATUS_ACCEPTED)
 
     time = Timetable.create!(
         teacher_id: req.teacher_id,
         student_id: req.student_id,
         subject: req.subject,
         schedule: req.schedule,
-        status: "open",
+        status: Constant::TIMETABLE_STATUS_OPEN,
         location: req.location,
         request_id: req.id
     )
@@ -95,14 +95,14 @@ class RequestController < ApplicationController
         student_id: req.student_id,
         timetables_id: time.id,
         amount: req.budget,
-        status: "new",
+        status: Constant::TUITION_STATUS_NEW,
         request_id: req.id
     )
     redirect_to root_path
   end
 
   def denial
-    Request.where(id: params[:id]).update_all(status: 'rejected')
+    Request.where(id: params[:id]).update_all(status: Constant::REQUEST_STATUS_REJECTED)
     redirect_to root_path
   end
 

@@ -8,15 +8,15 @@ class MainController < ApplicationController
     @user = User.all
     @user = @user.left_joins(teacher_requests: :review).select('users.*', 'AVG(reviews.star) AS star').group('users.id')
     unless current_user
-      @user = @user.where(role: 'teacher', contract_confirmed: true)
+      @user = @user.where(role: Constant::ROLE_TEACHER, contract_confirmed: true)
       search_user
       @user = @user.order(Arel.sql('COALESCE(AVG(reviews.star), 0) DESC')).paginate(page: params[:page], per_page: Constant::LIMIT_PER_PAGE)
       return
     end
 
     @current_user.reload
-    if @current_user.role == 'student'
-      @user = @user.where(role: 'teacher', contract_confirmed: true)
+    if @current_user.role == Constant::ROLE_STUDENT
+      @user = @user.where(role: Constant::ROLE_TEACHER, contract_confirmed: true)
     end
     search_user
     @user = @user.order(Arel.sql('COALESCE(AVG(reviews.star), 0) DESC')).paginate(page: params[:page], per_page: Constant::LIMIT_PER_PAGE)
@@ -48,7 +48,7 @@ class MainController < ApplicationController
       subject, level = params[:mon_cap].split(" - ")
       @request = @request.where(subject: subject, grade_level: level)
     end
-    @request = @request.order(Arel.sql("CASE WHEN requests.status = 'open' THEN 0 ELSE 1 END, requests.id DESC"))
+    @request = @request.order(Arel.sql("CASE WHEN requests.status = '#{Constant::REQUEST_STATUS_OPEN}' THEN 0 ELSE 1 END, requests.id DESC"))
 
     @request = @request.paginate(page: params[:page], per_page: Constant::LIMIT_PER_PAGE)
   end
@@ -60,11 +60,11 @@ class MainController < ApplicationController
     @current_user.reload
 
     case @current_user.role
-    when 'student'
+    when Constant::ROLE_STUDENT
       @dashboard = student_dashboard
-    when 'teacher'
+    when Constant::ROLE_TEACHER
       @dashboard = teacher_dashboard
-    when 'admin'
+    when Constant::ROLE_ADMIN
       @dashboard = admin_dashboard
     else
       redirect_to login_path
@@ -72,7 +72,7 @@ class MainController < ApplicationController
   end
 
   def export_users
-    redirect_to root_path and return unless @current_user.role == 'admin'
+    redirect_to root_path and return unless @current_user.role == Constant::ROLE_ADMIN
 
     @user = User.all
     @user = @user.left_joins(teacher_requests: :review).select('users.*', 'AVG(reviews.star) AS star').group('users.id')
@@ -83,11 +83,11 @@ class MainController < ApplicationController
   end
 
   def new_user_import
-    redirect_to root_path and return unless @current_user.role == 'admin'
+    redirect_to root_path and return unless @current_user.role == Constant::ROLE_ADMIN
   end
 
   def import_users
-    redirect_to root_path and return unless @current_user.role == 'admin'
+    redirect_to root_path and return unless @current_user.role == Constant::ROLE_ADMIN
 
     if params[:csv_file].blank?
       flash[:alert] = "Vui lòng chọn tệp CSV."
@@ -149,7 +149,7 @@ class MainController < ApplicationController
     end
 
     if params[:commit].nil?
-      if @current_user.role == 'student'
+      if @current_user.role == Constant::ROLE_STUDENT
         cap_hoc = tinh_cap_hoc(@current_user.date_of_birth)
         @user = @user.left_joins(:teacher_profile)
                     .where("teacher_profiles.subjects::text ILIKE ?", "%#{cap_hoc}%")
@@ -202,18 +202,18 @@ class MainController < ApplicationController
   end
 
   def student_dashboard
-    accepted_requests = Timetable.includes(:teacher).where(student_id: @current_user.id).where(status: %w(deposit open))
-    open_requests = Timetable.includes(:teacher).where(student_id: @current_user.id).where(status: 'closed').order(:id)
-    unpaid_tuitions = @current_user.student_tuitions.where(status: 'new')
-    outstanding_tuitions = @current_user.student_tuitions.where(status: %w(new deposit)).includes(:teacher)
+    accepted_requests = Timetable.includes(:teacher).where(student_id: @current_user.id).where(status: [Constant::TIMETABLE_STATUS_DEPOSIT, Constant::TIMETABLE_STATUS_OPEN])
+    open_requests = Timetable.includes(:teacher).where(student_id: @current_user.id).where(status: Constant::TIMETABLE_STATUS_CLOSED).order(:id)
+    unpaid_tuitions = @current_user.student_tuitions.where(status: Constant::TUITION_STATUS_NEW)
+    outstanding_tuitions = @current_user.student_tuitions.where(status: [Constant::TUITION_STATUS_NEW, Constant::TUITION_STATUS_DEPOSIT]).includes(:teacher)
     pending_reviews = Request.joins(:teacher).left_joins(:review).where(student_id: current_user.id).where(review: { id: nil })
-    timetable_entries = Timetable.includes(:teacher).where(student_id: @current_user.id).where(status: %w(deposit open)).order(:id)
+    timetable_entries = Timetable.includes(:teacher).where(student_id: @current_user.id).where(status: [Constant::TIMETABLE_STATUS_DEPOSIT, Constant::TIMETABLE_STATUS_OPEN]).order(:id)
     top_teachers = User.left_joins(teacher_requests: :review)
-                        .where(role: 'teacher', contract_confirmed: true)
+                        .where(role: Constant::ROLE_TEACHER, contract_confirmed: true)
                         .select('users.*', 'COALESCE(AVG(reviews.star), 0) AS avg_star')
                         .group('users.id')
                         .order(Arel.sql('COALESCE(AVG(reviews.star), 0) DESC'))
-                        .limit(5)
+                        .limit(Constant::TOP_TEACHERS_LIMIT)
 
     {
       accepted_count: accepted_requests.count,
@@ -227,21 +227,21 @@ class MainController < ApplicationController
   end
 
   def teacher_dashboard
-    open_requests = @current_user.teacher_requests.where(status: 'open').includes(:student)
-    accepted_requests = Timetable.includes(:teacher).where(teacher_id: @current_user.id).where(status: %w(deposit))
-    accepted_requests_coc = Timetable.includes(:teacher).where(teacher_id: @current_user.id).where(status: %w(open))
-    waiting_tuition = @current_user.teacher_tuitions.where(status: ['deposit', 'new'])
+    open_requests = @current_user.teacher_requests.where(status: Constant::REQUEST_STATUS_OPEN).includes(:student)
+    accepted_requests = Timetable.includes(:teacher).where(teacher_id: @current_user.id).where(status: [Constant::TIMETABLE_STATUS_DEPOSIT])
+    accepted_requests_coc = Timetable.includes(:teacher).where(teacher_id: @current_user.id).where(status: [Constant::TIMETABLE_STATUS_OPEN])
+    waiting_tuition = @current_user.teacher_tuitions.where(status: [Constant::TUITION_STATUS_DEPOSIT, Constant::TUITION_STATUS_NEW])
     average_rating = Review.joins(:request).where(requests: { teacher_id: @current_user.id }).average(:star).to_f.round(1)
     last_months = last_six_months
     monthly_income = last_months.map do |date|
       total = @current_user.teacher_tuitions
                            .left_joins(:request)
-                           .where(status: 'payed')
+                           .where(status: Constant::TUITION_STATUS_PAYED)
                            .where(requests: { created_at: date.beginning_of_month..date.end_of_month })
                            .sum(:amount)
       { label: date.strftime('%b'), total: total }
     end
-    weekly_schedule = Timetable.includes(:student).where(teacher_id: @current_user.id).where(status: 'deposit').order(:id)
+    weekly_schedule = Timetable.includes(:student).where(teacher_id: @current_user.id).where(status: Constant::TIMETABLE_STATUS_DEPOSIT).order(:id)
 
     {
       open_count: open_requests.count,
@@ -258,14 +258,14 @@ class MainController < ApplicationController
   end
 
   def admin_dashboard
-    teacher_count = User.where(role: 'teacher').count
-    student_count = User.where(role: 'student').count
-    pending_teachers = User.where(role: 'teacher', contract_confirmed: false)
+    teacher_count = User.where(role: Constant::ROLE_TEACHER).count
+    student_count = User.where(role: Constant::ROLE_STUDENT).count
+    pending_teachers = User.where(role: Constant::ROLE_TEACHER, contract_confirmed: false)
     locked_users = User.where(is_locked: true)
     last_months = last_six_months
     monthly_courses = last_months.map do |date|
-      open_count = Request.where(status: 'open').where(created_at: date.beginning_of_month..date.end_of_month).count
-      closed_count = Request.where(status: 'closed').where(created_at: date.beginning_of_month..date.end_of_month).count
+      open_count = Request.where(status: Constant::REQUEST_STATUS_OPEN).where(created_at: date.beginning_of_month..date.end_of_month).count
+      closed_count = Request.where(status: Constant::REQUEST_STATUS_CLOSED).where(created_at: date.beginning_of_month..date.end_of_month).count
       { label: date.strftime('%b'), open_count: open_count, closed_count: closed_count }
     end
 
@@ -274,20 +274,20 @@ class MainController < ApplicationController
       student_count: student_count,
       pending_contracts_count: pending_teachers.count,
       locked_accounts_count: locked_users.count,
-      active_courses_count: Timetable.where(status: %w(deposit open)).count,
+      active_courses_count: Timetable.where(status: [Constant::TIMETABLE_STATUS_DEPOSIT, Constant::TIMETABLE_STATUS_OPEN]).count,
       pending_teachers: pending_teachers,
       user_distribution: {
         teacher: teacher_count,
         student: student_count,
-        admin: User.where(role: 'admin').count
+        admin: User.where(role: Constant::ROLE_ADMIN).count
       },
       monthly_courses: monthly_courses,
-      recent_locked: locked_users.order(updated_at: :desc).limit(5)
+      recent_locked: locked_users.order(updated_at: :desc).limit(Constant::RECENT_LOCKED_USERS_LIMIT)
     }
   end
 
   def last_six_months
-    (5.downto(0)).map { |i| @today.prev_month(i) }
+    (Constant::DASHBOARD_MONTH_RANGE.downto(0)).map { |i| @today.prev_month(i) }
   end
 end
 

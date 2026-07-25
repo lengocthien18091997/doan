@@ -1,9 +1,9 @@
 class ReviewController < ApplicationController
 
   def list
-    @role = current_user.role == "teacher" ? 0 : 1
+    @role = current_user.role == Constant::ROLE_TEACHER ? Constant::REVIEW_ROLE_TEACHER : Constant::REVIEW_ROLE_STUDENT
 
-    if current_user.role == "teacher"
+    if current_user.role == Constant::ROLE_TEACHER
       # Teacher → xem review của student
       @requests = Request
                       .joins(:student)
@@ -16,7 +16,7 @@ class ReviewController < ApplicationController
        reviews.star,
        reviews.comment"
                       )
-    elsif current_user.role == "student"
+    elsif current_user.role == Constant::ROLE_STUDENT
       # Student → xem review của teacher
       @requests = Request.joins(:teacher).left_joins(:review).where(student_id: current_user.id).select(
                           "requests.*,
@@ -49,7 +49,7 @@ class ReviewController < ApplicationController
     review.request = request
 
     # Gán role theo người đang login
-    review.role = 1
+    review.role = Constant::REVIEW_ROLE_STUDENT
         # current_user.role == "teacher" ? :teacher : :student
 
     if review.save

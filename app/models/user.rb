@@ -11,7 +11,7 @@ class User < ActiveRecord::Base
 
   # has_secure_password
 
-  enum role: { student: "student", teacher: "teacher", admin: "admin" }
+  enum role: { student: Constant::ROLE_STUDENT, teacher: Constant::ROLE_TEACHER, admin: Constant::ROLE_ADMIN }
 
   validates :email, :password, presence: true
   validates :email, uniqueness: true

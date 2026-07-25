@@ -6,11 +6,11 @@ class Request < ActiveRecord::Base
   has_one :review
 
   enum status: {
-      open: "open",
-      accepted: "accepted",
-      studying: 'studying',
-      rejected: "rejected",
-      closed: "closed"
+      open: Constant::REQUEST_STATUS_OPEN,
+      accepted: Constant::REQUEST_STATUS_ACCEPTED,
+      studying: Constant::REQUEST_STATUS_STUDYING,
+      rejected: Constant::REQUEST_STATUS_REJECTED,
+      closed: Constant::REQUEST_STATUS_CLOSED
   }
 
   validates :subject, :budget, presence: true

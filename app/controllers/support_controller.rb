@@ -14,7 +14,7 @@ class SupportController < ApplicationController
         user_id: @current_user.id,
         category: params[:support][:category],
         comment: params[:support][:comment],
-        status: 'open'
+        status: Constant::SUPPORT_STATUS_OPEN
     )
     flash[:notice] = "Gửi thành công!"
     redirect_to support_path
@@ -22,13 +22,13 @@ class SupportController < ApplicationController
 
   def processing
     @support = Support.find(params[:id])
-    @support.update(status: "processing")
+    @support.update(status: Constant::SUPPORT_STATUS_PROCESSING)
     redirect_to support_path, notice: "Đã đánh dấu đang xử lý!"
   end
 
   def closed
     @support = Support.find(params[:id])
-    @support.update(status: "closed")
+    @support.update(status: Constant::SUPPORT_STATUS_CLOSED)
     redirect_to support_path, notice: "Đã đánh dấu đã xử lý!"
   end
 end

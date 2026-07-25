@@ -10,10 +10,10 @@ class ApplicationController < ActionController::Base
   helper_method :current_user
 
   def after_sign_in_path_for(user)
-    if user.role == 'teacher'
-      request_list_path
+    if user.role == Constant::ROLE_TEACHER
+      dashboard_path
     else
-      root_path
+      dashboard_path
     end
   end
 

@@ -10,7 +10,7 @@ class TuitionController < ApplicationController
     #                 .joins('JOIN timetables ON timetables.id = tuitions.timetables_id')
     #     .where(dk).order(:id)
 
-    dk = if current_user.role == 'teacher'
+    dk = if current_user.role == Constant::ROLE_TEACHER
            ["tuitions.teacher_id = ?", current_user.id]
          else
            ["tuitions.student_id = ?", current_user.id]
@@ -43,21 +43,21 @@ class TuitionController < ApplicationController
 
   def invoice
     @tuition = Tuition.find(params[:id])
-    redirect_to root_path and return unless current_user.role == 'student' || current_user.role == 'admin'
+    redirect_to root_path and return unless current_user.role == Constant::ROLE_STUDENT || current_user.role == Constant::ROLE_ADMIN
 
     @tuition_export = tuition_invoice_export(@tuition)
   end
 
   def deposit
     @tuition = Tuition.find(params[:id])
-    @tuition.update(status: "deposit", timetables_id: @tuition.timetables_id)
-    Timetable.where(id: @tuition.timetables_id).update_all(status: "deposit")
+    @tuition.update(status: Constant::TUITION_STATUS_DEPOSIT, timetables_id: @tuition.timetables_id)
+    Timetable.where(id: @tuition.timetables_id).update_all(status: Constant::TIMETABLE_STATUS_DEPOSIT)
     redirect_to tuition_path, notice: "Đã xác nhận cọc"
   end
 
   def complete
     @tuition = Tuition.find(params[:id])
-    @tuition.update(status: "payed")
+    @tuition.update(status: Constant::TUITION_STATUS_PAYED)
     redirect_to tuition_path, notice: "Đã hoàn thành học phí"
   end
 end

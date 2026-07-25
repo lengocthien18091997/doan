@@ -19,7 +19,7 @@ class SessionsController < ApplicationController
       )
       session[:session_token] = session_user.session_token
       flash[:notice] = "Đăng nhập thành công!"
-      redirect_to root_path
+      redirect_to dashboard_path
     else
       flash.now[:alert] = "Sai email hoặc mật khẩu!"
       render :new, status: :unprocessable_entity
