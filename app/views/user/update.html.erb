@@ -41,6 +41,12 @@
   </div>
 
   <div class="form-group">
+    <%= f.label :password, "Mật khẩu mới" %>
+    <%= f.password_field :password, class: "form-control", placeholder: "Nhập mật khẩu mới..." %>
+    <small class="text-muted">Để trống nếu không đổi mật khẩu.</small>
+  </div>
+
+  <div class="form-group">
     <%= f.label :gender, "Giới tính" %>
     <%= f.select :gender, [["nam", "male"], ["nữ", "female"]],
                  { prompt: "Chọn giới tính" },

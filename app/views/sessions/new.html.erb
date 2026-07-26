@@ -29,8 +29,36 @@
     <div class="d-flex justify-content-center">
       <%= link_to "Chưa có tài khoản? Đăng kí", register_path, class: "btn" %>
     </div>
-
   <% end %>
+
+  <div class="d-flex justify-content-center mt-2">
+    <a href="#" id="show-forgot-password" style="color: #0d6efd; text-decoration: underline;">Quên mật khẩu?</a>
+  </div>
+
+  <div id="forgot-password-form" style="display: none; margin-top: 12px;">
+    <%= form_with url: forgot_password_path, method: :post do %>
+      <label>Email</label>
+      <%= email_field_tag :email, nil, placeholder: "Nhập email để nhận mật khẩu mới" %>
+
+      <div class="d-flex justify-content-center mt-2">
+        <button class="btn btn-secondary" type="submit">Quên mật khẩu</button>
+      </div>
+    <% end %>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      var link = document.getElementById('show-forgot-password');
+      var form = document.getElementById('forgot-password-form');
+
+      if (link && form) {
+        link.addEventListener('click', function (event) {
+          event.preventDefault();
+          form.style.display = form.style.display === 'none' ? 'block' : 'none';
+        });
+      }
+    });
+  </script>
 </div>
 </body>
 </html>

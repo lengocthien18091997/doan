@@ -45,7 +45,12 @@ class UserController < ApplicationController
   end
 
   def update
-    if @current_user.update(params_update)
+    update_params = params_update
+    if update_params[:password].blank?
+      update_params.delete(:password)
+    end
+
+    if @current_user.update(update_params)
       flash[:notice] = "Cập nhật thành công!"
       redirect_to user_update_path
     else

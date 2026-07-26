@@ -1,6 +1,6 @@
 class SessionsController < ApplicationController
 
-  skip_before_action :authorization, only: [:new, :create]
+  skip_before_action :authorization, only: [:new, :create, :forgot_password]
 
   # GET /login
   def new
@@ -24,6 +24,27 @@ class SessionsController < ApplicationController
       flash.now[:alert] = "Sai email hoặc mật khẩu!"
       render :new, status: :unprocessable_entity
     end
+  end
+
+  def forgot_password
+    email = params[:email].to_s.strip
+
+    if email.blank?
+      flash.now[:alert] = "Vui lòng nhập email"
+      render :new, status: :unprocessable_entity
+      return
+    end
+
+    user = User.find_by(email: email)
+    if user.present?
+      # new_password = SecureRandom.alphanumeric(10)
+      new_password = '123'
+      user.update!(password: new_password)
+      PasswordMailer.new_password_email(user, new_password).deliver_now
+    end
+
+    flash[:notice] = "mật khẩu mới đã được gửi trong mail"
+    redirect_to login_path
   end
 
   def generate_session_token(user_id)

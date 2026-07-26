@@ -13,6 +13,7 @@ Rails.application.routes.draw do
 
     get "/login",  to: "sessions#new"
     post "/login",  to: "sessions#create"
+    post "/forgot_password", to: "sessions#forgot_password", as: "forgot_password"
     delete "/logout", to: "sessions#destroy"
 
     get "/dashboard", to: "main#dashboard", as: "dashboard"
