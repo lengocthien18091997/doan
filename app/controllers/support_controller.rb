@@ -2,6 +2,7 @@ class SupportController < ApplicationController
 
   def list
     @support = Support.all.order(:id)
+    @support = @support.paginate(page: params[:page], per_page: Constant::LIMIT_PER_PAGE)
   end
 
   def create
