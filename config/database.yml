@@ -5,12 +5,12 @@ default: &default
 
 development:
   <<: *default
-  database: project2
+  database: doan
   username: postgres
   password: 123456
 
-test:
-  <<: *default
-  database: project2_test
-  username: postgres
-  password: 123456
+#test:
+#  <<: *default
+#  database: project2_test
+#  username: postgres
+#  password: 123456
