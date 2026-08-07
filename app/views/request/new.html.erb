@@ -54,8 +54,8 @@
   </div>
 
   <div class="form-group">
-    <%= f.label :budget, "Kinh phí đề xuất (VND/1 giờ)" %>
-    <%= f.text_field :budget, class: "form-control", placeholder: "Nhập kinh phí...", value: @teacher.teacher_profile.hourly_rate %>
+    <%= f.label :budget, "Kinh phí đề xuất (VND/10 buổi)" %>
+    <%= f.text_field :budget, class: "form-control", placeholder: "Nhập kinh phí...", value: @teacher.teacher_profile.hourly_rate, disabled: true %>
   </div>
 
   <div class="form-group">
