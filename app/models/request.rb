@@ -8,7 +8,7 @@ class Request < ActiveRecord::Base
   enum status: {
       open: Constant::REQUEST_STATUS_OPEN,
       accepted: Constant::REQUEST_STATUS_ACCEPTED,
-      studying: Constant::REQUEST_STATUS_STUDYING,
+      # studying: Constant::REQUEST_STATUS_STUDYING,
       rejected: Constant::REQUEST_STATUS_REJECTED,
       closed: Constant::REQUEST_STATUS_CLOSED
   }

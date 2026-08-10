@@ -30,6 +30,7 @@ module UserHelper
 
 
   def tinh_cap_hoc(date)
+    return 'Cấp 3' if date.nil?
     tuoi = Time.now.year - date.year
     case tuoi
     when 0..11

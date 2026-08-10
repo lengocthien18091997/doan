@@ -10,7 +10,7 @@ module Constant
   ROLE_ADMIN = "admin"
   REQUEST_STATUS_OPEN = "open"
   REQUEST_STATUS_ACCEPTED = "accepted"
-  REQUEST_STATUS_STUDYING = "studying"
+  # REQUEST_STATUS_STUDYING = "studying"
   REQUEST_STATUS_REJECTED = "rejected"
   REQUEST_STATUS_CLOSED = "closed"
   TIMETABLE_STATUS_OPEN = "open"

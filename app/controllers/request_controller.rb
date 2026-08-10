@@ -7,7 +7,7 @@ class RequestController < ApplicationController
 
   def create
     # set_teacher
-    old_request = Request.where(student_id: current_user).where.not(status: Constant::REQUEST_STATUS_CLOSED)
+    old_request = Request.where(student_id: current_user).where.not(status: [Constant::REQUEST_STATUS_CLOSED, Constant::REQUEST_STATUS_REJECTED])
     # binding.pry
     if params[:teacher_full_name].blank? || params[:mon_cap].blank? || params[:date_time].blank? || params[:location].blank? || params[:budget].blank?
       flash.now[:alert] = "Vui lòng nhập đầy đủ thông tin!"
@@ -78,6 +78,14 @@ class RequestController < ApplicationController
 
   def accep
     req = Request.find(params[:id])
+    present_schedule = Timetable.where(teacher_id: req.teacher_id).where.not(status: "closed").pluck(:schedule)
+    if present_schedule.include?(req.schedule)
+      flash[:alert] = "Thời khóa biểu đang có thời gian này rồi!"
+      redirect_to root_path
+      # render :list, status: :unprocessable_entity
+      return
+    end
+
     req.update!(status: Constant::REQUEST_STATUS_ACCEPTED)
 
     time = Timetable.create!(
