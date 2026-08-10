@@ -23,7 +23,7 @@ class TuitionController < ApplicationController
                     .select("tuitions.*, teachers.full_name AS teacher_name, students.full_name AS student_name, timetables.subject, timetables.schedule")
                     .where(dk)
                     .order(:id)
-
+    @tuitions = @tuitions.paginate(page: params[:page], per_page: Constant::LIMIT_PER_PAGE)
   end
 
   def pay
