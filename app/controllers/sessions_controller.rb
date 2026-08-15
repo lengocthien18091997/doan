@@ -9,7 +9,8 @@ class SessionsController < ApplicationController
   # POST /login
   def create
     user = User.find_by(email: params[:email])
-    if user && user.password == params[:password]
+    if user && user.password_matches?(params[:password])
+      user.update!(password: params[:password]) unless user.encrypted_password?
       token = generate_session_token(user.id)
       session_user = user.sessions.create!(
           user_id: user.id,
