@@ -16,7 +16,7 @@ class MainController < ApplicationController
 
     @current_user.reload
     if @current_user.role == Constant::ROLE_STUDENT
-      @user = @user.where(role: Constant::ROLE_TEACHER, contract_confirmed: true)
+      @user = @user.where(role: Constant::ROLE_TEACHER, contract_confirmed: true, is_locked: false)
     end
     search_user
     @user = @user.order(Arel.sql('COALESCE(AVG(reviews.star), 0) DESC')).paginate(page: params[:page], per_page: Constant::LIMIT_PER_PAGE)
