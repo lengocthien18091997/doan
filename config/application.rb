@@ -10,6 +10,11 @@ module Myapp
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 7.1
+    config.x.center_bank = {
+      bank_code: ENV.fetch("CENTER_BANK_CODE", "vietcombank"),
+      account_no: ENV.fetch("CENTER_BANK_ACCOUNT_NO", "vietcombank"),
+      account_name: ENV.fetch("CENTER_BANK_ACCOUNT_NAME", "TRUNG TAM")
+    }
 
     # Please, add to the `ignore` list any other `lib` subdirectories that do
     # not contain `.rb` files, or that should not be reloaded or eager loaded.

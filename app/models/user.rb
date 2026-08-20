@@ -10,6 +10,8 @@ class User < ActiveRecord::Base
   has_many :timetables, foreign_key: "teacher_id", dependent: :destroy
   has_many :supports, dependent: :destroy
   has_many :sessions, dependent: :destroy
+  has_many :commission_fees_as_teacher, class_name: "CommissionFee", foreign_key: :teacher_id, dependent: :destroy
+  has_many :commission_fees_as_student, class_name: "CommissionFee", foreign_key: :student_id, dependent: :destroy
 
   enum role: { student: Constant::ROLE_STUDENT, teacher: Constant::ROLE_TEACHER, admin: Constant::ROLE_ADMIN }
 

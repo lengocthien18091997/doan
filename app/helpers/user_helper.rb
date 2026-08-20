@@ -16,6 +16,7 @@ module UserHelper
         :full_name, :email, :phone_number, :gender, :date_of_birth, :is_locked, :password,
         teacher_profile_attributes: [
             :bio, :education_level, :experience_years, :location, :hourly_rate, :bank_name, :bank_code, :bank_account_number, :bank_account_name,
+            document: [],
             subjects: {}, availability: {}
         ]
     )

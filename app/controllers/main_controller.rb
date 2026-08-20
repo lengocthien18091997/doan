@@ -275,6 +275,7 @@ class MainController < ApplicationController
       pending_contracts_count: pending_teachers.count,
       locked_accounts_count: locked_users.count,
       active_courses_count: Timetable.where(status: [Constant::TIMETABLE_STATUS_DEPOSIT, Constant::TIMETABLE_STATUS_OPEN]).count,
+      collected_commission_fee: CommissionFee.where(status: Constant::COMMISSION_FEE_STATUS_DONE).sum(:amount),
       pending_teachers: pending_teachers,
       user_distribution: {
         teacher: teacher_count,

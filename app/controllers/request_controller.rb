@@ -68,8 +68,10 @@ class RequestController < ApplicationController
     @request =
         if @current_user.role == Constant::ROLE_STUDENT
           base_query.where(student_id: @current_user.id).order(Arel.sql("CASE WHEN requests.status = '#{Constant::REQUEST_STATUS_OPEN}' THEN 0 ELSE 1 END, requests.id DESC"))
-        else
+        elsif @current_user.role == Constant::ROLE_TEACHER
           base_query.where(teacher_id: @current_user.id).order(Arel.sql("CASE WHEN requests.status = '#{Constant::REQUEST_STATUS_OPEN}' THEN 0 ELSE 1 END, requests.id DESC"))
+        else
+          base_query.order(Arel.sql("CASE WHEN requests.status = '#{Constant::REQUEST_STATUS_OPEN}' THEN 0 ELSE 1 END, requests.id DESC"))
         end
 
     @request = @request.paginate(page: params[:page], per_page: Constant::LIMIT_PER_PAGE)
@@ -86,9 +88,10 @@ class RequestController < ApplicationController
       return
     end
 
-    req.update!(status: Constant::REQUEST_STATUS_ACCEPTED)
+    Request.transaction do
+      req.update!(status: Constant::REQUEST_STATUS_ACCEPTED)
 
-    time = Timetable.create!(
+      time = Timetable.create!(
         teacher_id: req.teacher_id,
         student_id: req.student_id,
         subject: req.subject,
@@ -96,22 +99,41 @@ class RequestController < ApplicationController
         status: Constant::TIMETABLE_STATUS_OPEN,
         location: req.location,
         request_id: req.id
-    )
+      )
 
-    Tuition.create!(
+      Tuition.create!(
         teacher_id: req.teacher_id,
         student_id: req.student_id,
         timetables_id: time.id,
         amount: req.budget,
         status: Constant::TUITION_STATUS_NEW,
         request_id: req.id
-    )
+      )
+
+      CommissionFee.create!(
+        timetable: time,
+        teacher_id: req.teacher_id,
+        student_id: req.student_id,
+        amount: (req.budget.to_d * 5 / 100).round,
+        status: Constant::COMMISSION_FEE_STATUS_NEW
+      )
+    end
     redirect_to root_path
   end
 
   def denial
     Request.where(id: params[:id]).update_all(status: Constant::REQUEST_STATUS_REJECTED)
     redirect_to root_path
+  end
+
+  def cancel
+    req = Request.find(params[:id])
+    unless req.student_id == @current_user.id && req.status == Constant::REQUEST_STATUS_OPEN
+      redirect_to request_list_path, alert: "Bạn không thể hủy lời mời này." and return
+    end
+
+    req.destroy!
+    redirect_to request_list_path, notice: "Đã hủy lời mời."
   end
 
   private

@@ -17,7 +17,7 @@
 
 <%= render "common/notice" %>
 
-<%= form_with model: @current_user, url: user_update_path, method: :post, local: true, class: "update-form" do |f| %>
+<%= form_with model: @current_user, url: user_update_path, method: :post, local: true, html: { multipart: true }, class: "update-form" do |f| %>
   <div class="form-group">
     <%= f.label :full_name, "Họ tên" %>
     <%= f.text_field :full_name, class: "form-control", placeholder: "Nhập họ tên..." %>
@@ -72,6 +72,7 @@
     <div id="update-profile-container" style="display: none;">
       <%= render "common/update_profile", f: f %>
     </div>
+
   <% end %>
 
 

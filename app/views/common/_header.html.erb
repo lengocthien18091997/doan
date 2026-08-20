@@ -27,19 +27,27 @@
         <span>Reviews</span>
       <% end %>
       <% if current_user.role != 'admin' %>
-        <%= link_to request_list_path, class: "header-nav__link #{'active' if current_page?(request_list_path)}" do %>
-          <%= ui_icon(:invite, size: 19) %>
-          <span>Request</span>
-        <% end %>
 
         <%= link_to timetable_path, class: "header-nav__link #{'active' if current_page?(timetable_path)}" do %>
           <%= ui_icon(:schedule, size: 19) %>
           <span>Schedule</span>
         <% end %>
 
-        <%= link_to tuition_path, class: "header-nav__link #{'active' if current_page?(tuition_path)}" do %>
+      <% end %>
+
+      <%= link_to request_list_path, class: "header-nav__link #{'active' if current_page?(request_list_path)}" do %>
+        <%= ui_icon(:invite, size: 19) %>
+        <span>Request</span>
+      <% end %>
+
+      <%= link_to tuition_path, class: "header-nav__link #{'active' if current_page?(tuition_path)}" do %>
+        <%= ui_icon(:payments, size: 19) %>
+        <span>Payments</span>
+      <% end %>
+      <% if [Constant::ROLE_TEACHER, Constant::ROLE_ADMIN].include?(current_user.role) %>
+        <%= link_to commission_fee_path, class: "header-nav__link #{'active' if current_page?(commission_fee_path)}" do %>
           <%= ui_icon(:payments, size: 19) %>
-          <span>Payments</span>
+          <span>Accept Fee</span>
         <% end %>
       <% end %>
       <%= link_to support_path, method: :get, class: "header-nav__link #{'active' if current_page?(support_path)}" do %>

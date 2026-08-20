@@ -93,6 +93,9 @@
         <th>Lịch học</th>
         <th>Status</th>
         <th>Học phí</th>
+        <% if current_user.role == Constant::ROLE_STUDENT %>
+          <th>Thao tác</th>
+        <% end %>
       </tr>
       </thead>
       <tbody>
@@ -113,6 +116,19 @@
           <td>
             <%= "#{req.tuition.amount} - #{tuition_status_text(req.tuition.status)}" if req.tuition %>
           </td>
+          <% if current_user.role == Constant::ROLE_STUDENT %>
+            <td>
+              <% if req.status == Constant::REQUEST_STATUS_OPEN %>
+                <%= button_to "Hủy",
+                              request_cancel_path(req),
+                              method: :post,
+                              data: { confirm: "Bạn có chắc muốn hủy lời mời này?" },
+                              class: "btn btn-sm btn-outline-danger" %>
+              <% else %>
+                <span class="text-muted">-</span>
+              <% end %>
+            </td>
+          <% end %>
 
         </tr>
       <% end %>

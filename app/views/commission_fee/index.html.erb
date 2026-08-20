@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Accept Fee</title>
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+  <%= stylesheet_link_tag "application", media: "all", "data-turbo-track": "reload" %>
+</head>
+<body class="index">
+<%= render "common/header" %>
+<%= render "common/notice" %>
+
+<h2>Accept Fee</h2>
+<div class="table-container">
+  <table>
+    <thead>
+      <tr>
+        <th>Mã lớp</th>
+        <% if current_user.role == Constant::ROLE_TEACHER %>
+          <th>Tên học sinh</th>
+        <% else %>
+          <th>Tên gia sư</th>
+        <% end %>
+        <th>Status</th>
+        <th>Số tiền phí (5% học phí)</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @commission_fees.each do |fee| %>
+        <tr>
+          <td><%= fee.timetable_id %></td>
+          <td><%= current_user.role == Constant::ROLE_TEACHER ? fee.student.full_name : fee.teacher.full_name %></td>
+          <td><%= commission_fee_status_text(fee.status) %></td>
+          <td><%= number_to_currency(fee.amount, unit: "VND", precision: 0) %></td>
+          <td>
+            <% if current_user.role == Constant::ROLE_TEACHER && fee.status == Constant::COMMISSION_FEE_STATUS_NEW %>
+              <%= link_to "Nộp tiền", commission_fee_pay_path(fee), class: "btn btn-sm btn-warning" %>
+            <% elsif current_user.role == Constant::ROLE_ADMIN && fee.status == Constant::COMMISSION_FEE_STATUS_PENDING_ADMIN %>
+              <%= button_to "Xác nhận đã nhận tiền", commission_fee_confirm_received_path(fee), method: :post, class: "btn btn-sm btn-success" %>
+            <% else %>
+              <span class="text-muted">-</span>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+      <% if @commission_fees.blank? %>
+        <tr><td colspan="5">Chưa có phí hoa hồng.</td></tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+<div class="pagination"><%= will_paginate @commission_fees %></div>
+</body>
+</html>

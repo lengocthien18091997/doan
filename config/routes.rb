@@ -28,6 +28,7 @@ Rails.application.routes.draw do
     post "/user_lock/:id", to: "user#lock", as: "user_lock"
     post "/user_unlock/:id", to: "user#unlock", as: "user_unlock"
     get "/user_detail/:id", to: "user#detail", as: "user_detail"
+    get "/user_document_download/:id", to: "user#download_teacher_document", as: "user_document_download"
     get "/user_export", to: "main#export_users", as: "user_export"
     get "/user_import", to: "main#new_user_import", as: "user_import"
     post "/user_import", to: "main#import_users", as: "user_import_create"
@@ -35,6 +36,12 @@ Rails.application.routes.draw do
     get "/request/list", to: "request#list", as: "request_list"
     post "/request_accep/:id", to: "request#accep", as: "request_accep"
     post "/request_denial/:id", to: "request#denial", as: "request_denial"
+    post "/request_cancel/:id", to: "request#cancel", as: "request_cancel"
+
+    get "/commission_fee", to: "commission_fee#index", as: "commission_fee"
+    get "/commission_fee_pay/:id", to: "commission_fee#pay", as: "commission_fee_pay"
+    post "/commission_fee_submit_transfer/:id", to: "commission_fee#submit_transfer", as: "commission_fee_submit_transfer"
+    post "/commission_fee_confirm_received/:id", to: "commission_fee#confirm_received", as: "commission_fee_confirm_received"
 
     get "/request/:id", to: "request#new", as: "request"
     post "/request/:id", to: "request#create", as: "request_save"

@@ -101,6 +101,17 @@
         <span>Chưa cập nhật</span>
       <% end %>
     </div>
+
+    <% if @current_user.role == "admin" %>
+      <div class="form-group">
+        <%= label :document, "Hồ sơ gia sư" %>
+        <% if @user_detail.teacher_profile&.documents.present? || @user_detail.teacher_profile&.document_path.present? %>
+          <%= link_to "Tải xuống toàn bộ hồ sơ (ZIP)", user_document_download_path(@user_detail), class: "btn btn-primary btn-sm" %>
+        <% else %>
+          <span>Chưa gửi hồ sơ</span>
+        <% end %>
+      </div>
+    <% end %>
   <%end %>
 
   <div class="form-actions mt-3">

@@ -61,4 +61,10 @@
   <%= render "common/choose_subject" %>
 
   <%= render "common/choose_time" %>
+
+  <div class="form-group mt-3">
+    <%= tp.label :document, "Gửi hồ sơ" %>
+    <%= tp.file_field :document, accept: ".png,.jpg", multiple: true, class: "form-control" %>
+    <small class="text-muted">upload đơn xin cộng tác cùng các giấy tờ liên quan để được xét duyệt (tối đa 4 tệp, mỗi tệp không quá 10 MB)</small>
+  </div>
 <% end %>

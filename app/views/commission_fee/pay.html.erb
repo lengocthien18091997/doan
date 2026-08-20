@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Nộp phí hoa hồng</title>
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+
+  <%= stylesheet_link_tag "application", media: "all", "data-turbo-track": "reload" %>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-..." crossorigin="anonymous">
+</head>
+<body class="index">
+<%= render "common/header" %>
+<%= render "common/notice" %>
+
+<div class="container mt-5 text-center">
+  <h3>Quét mã QR để nộp phí hoa hồng</h3>
+  <p>Mã lớp: <strong><%= @commission_fee.timetable_id %></strong></p>
+  <p>Số tiền: <strong><%= number_to_currency(@commission_fee.amount, unit: "VND", precision: 0) %></strong></p>
+  <div class="my-4"><img src="<%= @qr_url %>" alt="VietQR trung tâm" class="img-fluid" /></div>
+  <div class="text-muted">
+    <p>Tài khoản nhận tiền: <strong><%= @center_bank[:account_name] %></strong></p>
+    <p>Ngân hàng: <strong><%= @center_bank[:bank_code] %></strong></p>
+    <p>Số tài khoản: <strong><%= @center_bank[:account_no].presence || "Chưa cấu hình" %></strong></p>
+    <p>Nội dung chuyển khoản: <strong><%= @transfer_desc %></strong></p>
+  </div>
+</div>
+<div class="container mt-4 mb-4 text-center">
+  <%= link_to "Quay lại", commission_fee_path, class: "btn btn-secondary me-2" %>
+  <%= button_to "Tôi xác nhận đã chuyển khoản", commission_fee_submit_transfer_path(@commission_fee), method: :post, class: "btn btn-warning" %>
+</div>
+</body>
+</html>

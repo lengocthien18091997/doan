@@ -10,9 +10,22 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_07_26_090000) do
+ActiveRecord::Schema[7.1].define(version: 2026_08_20_030000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "commission_fees", force: :cascade do |t|
+    t.bigint "timetable_id", null: false
+    t.bigint "teacher_id", null: false
+    t.bigint "student_id", null: false
+    t.integer "amount", null: false
+    t.string "status", default: "new", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["student_id"], name: "index_commission_fees_on_student_id"
+    t.index ["teacher_id"], name: "index_commission_fees_on_teacher_id"
+    t.index ["timetable_id"], name: "index_commission_fees_on_timetable_id", unique: true
+  end
 
   create_table "requests", force: :cascade do |t|
     t.bigint "student_id", null: false
@@ -75,6 +88,9 @@ ActiveRecord::Schema[7.1].define(version: 2026_07_26_090000) do
     t.string "bank_code", comment: "Mã ngân hàng (VCB, BIDV, ACB...)"
     t.string "bank_account_number", comment: "Số tài khoản ngân hàng"
     t.string "bank_account_name", comment: "Tên chủ tài khoản"
+    t.string "document_path"
+    t.string "document_filename"
+    t.jsonb "documents", default: [], null: false
     t.index ["user_id"], name: "index_teacher_profiles_on_user_id"
   end
 
@@ -99,6 +115,8 @@ ActiveRecord::Schema[7.1].define(version: 2026_07_26_090000) do
     t.integer "amount", null: false
     t.string "status", default: "new"
     t.integer "request_id"
+    t.datetime "student_paid_at"
+    t.datetime "teacher_paid_at"
     t.index ["student_id"], name: "index_tuitions_on_student_id"
     t.index ["teacher_id"], name: "index_tuitions_on_teacher_id"
     t.index ["timetables_id"], name: "index_tuitions_on_timetables_id"
@@ -119,6 +137,9 @@ ActiveRecord::Schema[7.1].define(version: 2026_07_26_090000) do
     t.index ["email"], name: "index_users_on_email", unique: true
   end
 
+  add_foreign_key "commission_fees", "timetables"
+  add_foreign_key "commission_fees", "users", column: "student_id"
+  add_foreign_key "commission_fees", "users", column: "teacher_id"
   add_foreign_key "requests", "users", column: "student_id"
   add_foreign_key "requests", "users", column: "teacher_id"
   add_foreign_key "reviews", "requests"

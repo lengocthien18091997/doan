@@ -12,8 +12,10 @@ class TuitionController < ApplicationController
 
     dk = if current_user.role == Constant::ROLE_TEACHER
            ["tuitions.teacher_id = ?", current_user.id]
-         else
+         elsif current_user.role == Constant::ROLE_STUDENT
            ["tuitions.student_id = ?", current_user.id]
+         else
+           []
          end
 
     @tuitions = Tuition

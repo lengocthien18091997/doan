@@ -184,6 +184,7 @@
         <%= render "common/dashboard_stat", label: "Chờ duyệt tài khoản", value: @dashboard[:pending_contracts_count], icon: :invite, tone: "amber" %>
         <%= render "common/dashboard_stat", label: "Tài khoản bị khóa", value: @dashboard[:locked_accounts_count], icon: :lock, tone: "red" %>
         <%= render "common/dashboard_stat", label: "Khóa học đang diễn ra", value: @dashboard[:active_courses_count], icon: :book, tone: "green" %>
+        <%= render "common/dashboard_stat", label: "Tổng phí hoa hồng đã thu", value: number_to_currency(@dashboard[:collected_commission_fee], unit: "", delimiter: ",", precision: 0) + " đ", icon: :money, tone: "amber" %>
       </div>
 
       <div class="dashboard-row">
